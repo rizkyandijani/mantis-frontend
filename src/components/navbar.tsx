@@ -11,9 +11,9 @@ const Navbar: React.FC = () => {
     { to: "/checklist", label: "Checklist" },
     { to: "/approval", label: "Approval" },
     { to: "/machines", label: "Machines" },
-    { to: "/schedule", label: "Schedule" },
-    { to: "/notifications", label: "Notifications" },
-    { to: "/status", label: "Status" },
+    // { to: "/schedule", label: "Schedule" },
+    // { to: "/notifications", label: "Notifications" },
+    // { to: "/status", label: "Status" },
   ];
 
   return (

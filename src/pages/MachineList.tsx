@@ -12,8 +12,12 @@ export default function MachineList() {
   const [machines, setMachines] = useState<Machine[]>([]);
 
   useEffect(() => {
-    axios.get("/api/machines").then((res) => setMachines(res.data));
+    axios
+      .get("http://localhost:8080/api/machine")
+      .then((res) => setMachines(res.data));
   }, []);
+
+  console.log("cek machines", machines);
 
   return (
     <div className="p-4">

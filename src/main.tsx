@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import "./index.css";
+import "./tailwind.css";
 import Dashboard from "./pages/Dashboard";
 import ChecklistForm from "./pages/ChecklistForm";
 import ApprovalList from "./pages/ApprovalList";
