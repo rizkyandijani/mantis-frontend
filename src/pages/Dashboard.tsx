@@ -36,7 +36,7 @@ export interface monthlyPerformances {
 export const getMachinePerformances = () => {
   return useQuery<monthlyPerformances[]>({
     queryKey: ["totalMaintenancePerformance"],
-    queryFn: () => apiFetch("http://localhost:8080/api/maintenance/summary"),
+    queryFn: () => apiFetch("maintenance/summary"),
 
     retry: 1,
     staleTime: 1000 * 60 * 5, // 5 minutes

@@ -1,14 +1,17 @@
 // src/lib/api.ts
+const API_URL = import.meta.env.VITE_API_URL as string;
 export interface FetchOptions extends RequestInit {
     headers?: HeadersInit;
   }
+
+
   
   export async function apiFetch<T>(
     url: string,
     options: FetchOptions = {}
   ): Promise<T> {
     try {
-      const res = await fetch(url, {
+      const res = await fetch(`${API_URL}/${url}`, {
         headers: {
           'Content-Type': 'application/json',
           ...options.headers,

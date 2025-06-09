@@ -37,7 +37,7 @@ export default function ChecklistForm() {
   // 2) Fetch mesin
   const { data: machines, isLoading: loadingMachines } = useQuery<Machine[]>({
     queryKey: ["machines"],
-    queryFn: () => apiFetch("http://localhost:8080/api/machine"),
+    queryFn: () => apiFetch("machine"),
   });
 
   // 3) Fetch instruktur (atau bisa static jika belum ada API)
@@ -85,7 +85,7 @@ export default function ChecklistForm() {
   const mutation = useMutation({
     // 1) mutationFn taking ChecklistPayload and returning whatever your apiFetch returns
     mutationFn: (payload: ChecklistPayload) =>
-      apiFetch("http://localhost:8080/api/checklist", {
+      apiFetch("checklist", {
         method: "POST",
         body: JSON.stringify(payload),
       }),
