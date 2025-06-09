@@ -1,6 +1,7 @@
 // src/pages/MachineList.tsx
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "../libs/api";
 
 interface Machine {
   id: string;
@@ -8,16 +9,29 @@ interface Machine {
   section: string;
 }
 
+export const getMachineList = () => {
+  return useQuery<Machine[]>({
+    queryKey: ["listMachine"],
+    queryFn: () => apiFetch("machine"),
+
+    retry: 1,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
+
 export default function MachineList() {
   const [machines, setMachines] = useState<Machine[]>([]);
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/machine")
-      .then((res) => setMachines(res.data));
-  }, []);
+  const { data, error, isLoading } = getMachineList();
 
-  console.log("cek machines", machines);
+  useEffect(() => {
+    if (data) {
+      setMachines(data);
+    }
+  }, [data]);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {(error as any).message}</p>;
 
   return (
     <div className="p-4">
