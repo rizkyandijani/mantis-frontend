@@ -10,7 +10,7 @@ interface Submission {
 }
 
 export default function ApprovalPage() {
-  const [submissions, setSubmissions] = useState<Submission[]>([
+  const [submissions, _setSubmissions] = useState<Submission[]>([
     {
       id: 1,
       studentName: "Rizky A.",
