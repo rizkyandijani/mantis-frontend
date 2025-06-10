@@ -11,8 +11,10 @@ export interface FetchOptions extends RequestInit {
     options: FetchOptions = {}
   ): Promise<T> {
     try {
+      const t = localStorage.getItem("authToken");
       const res = await fetch(`${API_URL}/${url}`, {
         headers: {
+          'Authorization': t ? `Bearer ${t}` : '',
           'Content-Type': 'application/json',
           ...options.headers,
         },
@@ -20,8 +22,6 @@ export interface FetchOptions extends RequestInit {
       });
   
       const contentType = res.headers.get("Content-Type") || "";
-
-      console.log("cek res", res)
   
       // Handle non-2xx status
       if (!res.ok) {
@@ -37,7 +37,6 @@ export interface FetchOptions extends RequestInit {
       const data = await res.json();
       return data as T;
     } catch (err) {
-    console.log("cek err", err)
       console.error(`[apiFetch] Error fetching ${url}:`, err);
       // Optionally throw custom 400 response
       throw {

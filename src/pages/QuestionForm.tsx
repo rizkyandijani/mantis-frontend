@@ -1,4 +1,4 @@
-// src/pages/ChecklistForm.tsx
+// src/pages/QuestionForm.tsx
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../libs/api";
@@ -16,18 +16,18 @@ interface Question {
   isActive: boolean;
 }
 
-interface ChecklistPayload {
-  studentName: string;
+interface QuestionPayload {
+  studentEmail: string;
   instructor: string;
   machineId: string;
-  answers: Record<string, boolean>;
+  responses: Record<string, boolean>;
 }
 
-export default function ChecklistForm() {
+export default function QuestionForm() {
   const qc = useQueryClient();
 
   // 1) State dasar
-  const [studentName, setStudentName] = useState("");
+  const [studentEmail, setStudentEmail] = useState("");
   const [instructor, setInstructor] = useState("");
   const [machineId, setMachineId] = useState("");
 
@@ -51,7 +51,7 @@ export default function ChecklistForm() {
     { name: "Instruktur B", id: 234 },
   ]; // contoh data statis
 
-  // 4) Fetch pertanyaan/checklist tiap kali machineId berubah
+  // 4) Fetch pertanyaan tiap kali machineId berubah
   const machineType = machines?.find((m) => m.id === machineId)?.type;
   const {
     data: questions,
@@ -59,19 +59,14 @@ export default function ChecklistForm() {
     refetch: refetchQuestions,
   } = useQuery<Question[]>({
     enabled: !!machineType,
-    queryKey: ["checklist", machineType],
+    queryKey: ["question", machineType],
     // hanya fetch jika machineType sudah ada
     queryFn: () =>
-      apiFetch(
-        `http://localhost:8080/api/checklistTemplate/byType/${encodeURIComponent(
-          machineType!
-        )}`
-      ),
+      apiFetch(`questionTemplate/byType/${encodeURIComponent(machineType!)}`),
   });
 
   // 5) Inisialisasi answers tiap kali questions datang
   useEffect(() => {
-    console.log("cek questions", questions);
     if (questions) {
       const init: Record<string, boolean> = {};
       questions.forEach((q) => {
@@ -83,17 +78,17 @@ export default function ChecklistForm() {
 
   // 6) Mutation untuk submit
   const mutation = useMutation({
-    // 1) mutationFn taking ChecklistPayload and returning whatever your apiFetch returns
-    mutationFn: (payload: ChecklistPayload) =>
-      apiFetch("checklist", {
+    // 1) mutationFn taking QuestionPayload and returning whatever your apiFetch returns
+    mutationFn: (payload: QuestionPayload) =>
+      apiFetch("maintenance", {
         method: "POST",
         body: JSON.stringify(payload),
       }),
     // 2) onSuccess no longer needs generics—TS infers it
     onSuccess: () => {
       // invalidateQueries needs an object with a `queryKey` property
-      qc.invalidateQueries({ queryKey: ["userChecklistHistory"] });
-      alert("Checklist berhasil dikirim!");
+      qc.invalidateQueries({ queryKey: ["userQuestionHistory"] });
+      alert("Question berhasil dikirim!");
       // … reset your state here …
     },
     onError: (err: any) => {
@@ -107,34 +102,41 @@ export default function ChecklistForm() {
   };
 
   const handleSubmit = () => {
-    if (!studentName || !instructor || !machineId) {
+    if (!studentEmail || !instructor || !machineId) {
       alert("Lengkapi nama mahasiswa, instruktur, dan mesin.");
       return;
     }
-    mutation.mutate({
-      studentName,
+    console.log(
+      "cek payload mutate",
+      studentEmail,
       instructor,
       machineId,
-      answers,
+      answers
+    );
+    mutation.mutate({
+      studentEmail,
+      instructor,
+      machineId,
+      responses: answers,
     });
   };
 
   // 8) Render
   if (loadingMachines || loadingInstr) return <p>Loading form data...</p>;
   if (machineType && loadingQuestions)
-    return <p>Loading checklist untuk mesin {machineType}…</p>;
+    return <p>Loading pertanyaan untuk mesin {machineType}…</p>;
 
   return (
     <div className="max-w-xl mx-auto p-4 bg-white shadow rounded-lg">
       <h2 className="text-2xl font-semibold mb-6">
-        Checklist Perawatan Harian
+        Pertanyaan Perawatan Harian
       </h2>
 
       {/* Nama Mahasiswa */}
       <label className="block mb-1 font-medium">Nama Mahasiswa</label>
       <input
-        value={studentName}
-        onChange={(e) => setStudentName(e.target.value)}
+        value={studentEmail}
+        onChange={(e) => setStudentEmail(e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-4"
         placeholder="Masukkan nama..."
       />
@@ -173,11 +175,11 @@ export default function ChecklistForm() {
         ))}
       </select>
 
-      {/* Checklist Dinamis */}
+      {/* Question Dinamis */}
       {questions && questions.length > 0 && (
         <fieldset className="mb-6">
           <legend className="font-medium mb-2">
-            Checklist untuk {machineType}
+            Pertanyaan untuk {machineType}
           </legend>
           <div className="space-y-2">
             {questions.map((q) => (
@@ -200,7 +202,7 @@ export default function ChecklistForm() {
         disabled={mutation.isPending}
         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded disabled:opacity-50"
       >
-        {mutation.isPending ? "Mengirim…" : "Submit Checklist"}
+        {mutation.isPending ? "Mengirim…" : "Submit Answer"}
       </button>
     </div>
   );
