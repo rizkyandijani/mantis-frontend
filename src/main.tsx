@@ -19,6 +19,7 @@ import MachineStatus from "./pages/MachineStatus";
 import QRAccessPage from "./pages/QRAccessPage";
 import Navbar from "./components/navbar";
 import LoginPage from "./pages/login";
+import ReviewMaintenance from "./pages/ReviewMaintenance";
 import { AuthProvider } from "./contexts/AuthContext";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import { ProtectedRoute } from "./components/protectedRoute";
@@ -114,6 +115,16 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                           allowedRoles={[UserRole.ADMIN, UserRole.INSTRUCTOR]}
                         >
                           <MachineStatus />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/approval/:id"
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[UserRole.ADMIN, UserRole.INSTRUCTOR]}
+                        >
+                          <ReviewMaintenance />
                         </ProtectedRoute>
                       }
                     />

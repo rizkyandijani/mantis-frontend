@@ -37,6 +37,7 @@ export interface FetchOptions extends RequestInit {
       const data = await res.json();
       return data as T;
     } catch (err) {
+      console.log("cek error fetch", err)
       console.error(`[apiFetch] Error fetching ${url}:`, err);
       // Optionally throw custom 400 response
       throw {

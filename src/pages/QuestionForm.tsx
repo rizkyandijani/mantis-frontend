@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../libs/api";
+import { User } from "../types/user";
+import { useAuth } from "../contexts/AuthContext";
 
 interface Machine {
   id: string;
@@ -16,18 +18,24 @@ interface Question {
   isActive: boolean;
 }
 
+interface Answer {
+  questionId: string;
+  answer: boolean;
+}
+
 interface QuestionPayload {
   studentEmail: string;
-  instructor: string;
+  instructorId: string;
   machineId: string;
-  responses: Record<string, boolean>;
+  responses: Answer[];
 }
 
 export default function QuestionForm() {
   const qc = useQueryClient();
+  const { email } = useAuth();
 
   // 1) State dasar
-  const [studentEmail, setStudentEmail] = useState("");
+  const [studentEmail, setStudentEmail] = useState(email || "");
   const [instructor, setInstructor] = useState("");
   const [machineId, setMachineId] = useState("");
 
@@ -41,15 +49,10 @@ export default function QuestionForm() {
   });
 
   // 3) Fetch instruktur (atau bisa static jika belum ada API)
-  // const { data: instructors, isLoading: loadingInstr } = useQuery<string[]>({
-  //   queryKey: ["instructors"],
-  //   queryFn: () => apiFetch("http://localhost:8080/api/instructor"),
-  // });
-  const loadingInstr = false; // set loadingInstr ke false jika tidak ada API
-  const instructors = [
-    { name: "Instruktur A", id: 123 },
-    { name: "Instruktur B", id: 234 },
-  ]; // contoh data statis
+  const { data: instructors, isLoading: loadingInstr } = useQuery<User[]>({
+    queryKey: ["instructors"],
+    queryFn: () => apiFetch("user/role/instructor"),
+  });
 
   // 4) Fetch pertanyaan tiap kali machineId berubah
   const machineType = machines?.find((m) => m.id === machineId)?.type;
@@ -89,9 +92,14 @@ export default function QuestionForm() {
       // invalidateQueries needs an object with a `queryKey` property
       qc.invalidateQueries({ queryKey: ["userQuestionHistory"] });
       alert("Question berhasil dikirim!");
+      setAnswers({});
+      setInstructor("");
+      setMachineId("");
+
       // … reset your state here …
     },
     onError: (err: any) => {
+      console.log("cek error", err);
       alert("Gagal submit: " + err.message);
     },
   });
@@ -106,18 +114,17 @@ export default function QuestionForm() {
       alert("Lengkapi nama mahasiswa, instruktur, dan mesin.");
       return;
     }
-    console.log(
-      "cek payload mutate",
-      studentEmail,
-      instructor,
-      machineId,
-      answers
-    );
+    const ArrayAnswers = Object.keys(answers).map((el) => {
+      return {
+        questionId: el,
+        answer: answers[el],
+      };
+    });
     mutation.mutate({
       studentEmail,
-      instructor,
+      instructorId: instructor,
       machineId,
-      responses: answers,
+      responses: ArrayAnswers,
     });
   };
 
@@ -136,6 +143,7 @@ export default function QuestionForm() {
       <label className="block mb-1 font-medium">Nama Mahasiswa</label>
       <input
         value={studentEmail}
+        disabled={!!email} // disable if email is already set
         onChange={(e) => setStudentEmail(e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-4"
         placeholder="Masukkan nama..."

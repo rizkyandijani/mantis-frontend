@@ -1,63 +1,76 @@
-// src/pages/ApprovalPage.tsx
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "../libs/api";
+import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
-interface Submission {
-  id: number;
-  studentName: string;
-  machineId: string;
-  submittedAt: string;
-  checklistSummary: string;
-}
-
-export default function ApprovalPage() {
-  const [submissions, _setSubmissions] = useState<Submission[]>([
-    {
-      id: 1,
-      studentName: "Rizky A.",
-      machineId: "ML-01",
-      submittedAt: "2025-06-03",
-      checklistSummary: "Oil OK, Coolant OK, Noise Detected",
-    },
-  ]);
-
-  const handleAction = (id: number, approved: boolean, comment: string) => {
-    console.log(approved ? "Approved" : "Rejected", id, comment);
+type PendingApproval = {
+  id: string;
+  date: string;
+  student: {
+    name: string | null;
+    email: string;
   };
+  machine: {
+    name: string;
+    unit: string;
+  };
+};
+
+export default function ApprovalList() {
+  const { userId } = useAuth();
+  const { data, isLoading, error } = useQuery<PendingApproval[]>({
+    queryKey: ["pending-approvals"],
+    queryFn: () =>
+      apiFetch(
+        `maintenance/status/PENDING/approver/${encodeURIComponent(userId!)}`
+      ),
+  });
+
+  if (isLoading) return <p className="p-4">Loading...</p>;
+  if (error) return <p className="p-4 text-red-500">Error fetching data</p>;
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-semibold mb-4">
-        Approval Checklist Mahasiswa
-      </h2>
-      {submissions.map((entry) => (
-        <div key={entry.id} className="border p-4 mb-4 rounded-md shadow">
-          <div className="mb-2 font-medium">
-            {entry.studentName} - Mesin {entry.machineId}
-          </div>
-          <div className="text-sm mb-2">
-            Checklist: {entry.checklistSummary}
-          </div>
-          <div className="text-sm mb-2">Tanggal: {entry.submittedAt}</div>
-          <textarea
-            placeholder="Komentar..."
-            className="w-full border p-2 mb-2"
-          ></textarea>
-          <div className="space-x-2">
-            <button
-              className="bg-green-500 text-white px-4 py-2 rounded"
-              onClick={() => handleAction(entry.id, true, "Disetujui")}
-            >
-              Approve
-            </button>
-            <button
-              className="bg-red-500 text-white px-4 py-2 rounded"
-              onClick={() => handleAction(entry.id, false, "Perlu diperbaiki")}
-            >
-              Reject
-            </button>
-          </div>
-        </div>
-      ))}
+      <h1 className="text-xl font-bold mb-4">
+        Pending Daily Maintenance Approvals
+      </h1>
+      {data && data.length > 0 ? (
+        <table className="w-full table-auto border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border p-2">Date</th>
+              <th className="border p-2">Machine</th>
+              <th className="border p-2">Unit</th>
+              <th className="border p-2">Student</th>
+              <th className="border p-2">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item) => (
+              <tr key={item.id}>
+                <td className="border p-2">
+                  {new Date(item.date).toLocaleDateString()}
+                </td>
+                <td className="border p-2">{item.machine.name}</td>
+                <td className="border p-2">{item.machine.unit}</td>
+                <td className="border p-2">
+                  {item.student.name || item.student.email}
+                </td>
+                <td className="border p-2 text-center">
+                  <Link
+                    to={`/approval/${item.id}`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    Review
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p className="text-gray-600">No pending approvals.</p>
+      )}
     </div>
   );
 }

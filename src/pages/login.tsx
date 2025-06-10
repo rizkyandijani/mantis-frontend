@@ -35,9 +35,7 @@ export default function LoginPage() {
       if (response.token) {
         login(response.token);
         const { role } = jwtDecode<AuthPayload>(response.token);
-        console.log("cek role", role);
         if (role === UserRole.STUDENT) {
-          console.log("masuk mau ke question");
           navigate("/question");
         } else {
           navigate("/dashboard");
