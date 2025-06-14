@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Role } from "../types/user";
 
@@ -11,6 +11,7 @@ interface Props {
 export function ProtectedRoute({ allowedRoles, children }: Props) {
   //   const navigate = useNavigate();
   const { token, role, isAuthReady } = useAuth();
+  const location = useLocation();
   console.log("masuk protected", token, role);
   if (!isAuthReady) {
     return null; // or a loading spinner
@@ -18,9 +19,8 @@ export function ProtectedRoute({ allowedRoles, children }: Props) {
 
   if (!token) {
     console.log("masuk protected no token");
-    // not logged in
-    // navigate("/login");
-    return <Navigate to="/login" replace />;
+    return <Navigate to={`/login?redirect=${location.pathname}`} />;
+    // return <Navigate to="/login" replace />;
   }
   if (!role || !allowedRoles.includes(role)) {
     console.log("masuk protected no role or not allowed");

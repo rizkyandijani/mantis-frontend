@@ -6,7 +6,7 @@ export enum UserRole {
   INSTRUCTOR = 'instructor',
 }
 
-export interface User {
+export interface UserData {
   id: number;
   email: string;
   password?: string;

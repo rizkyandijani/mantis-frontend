@@ -2,8 +2,9 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../libs/api";
-import { User } from "../types/user";
+import { UserData } from "../types/user";
 import { useAuth } from "../contexts/AuthContext";
+import { useParams } from "react-router-dom";
 
 interface Machine {
   id: string;
@@ -32,12 +33,13 @@ interface QuestionPayload {
 
 export default function QuestionForm() {
   const qc = useQueryClient();
+  const { machineId: paramMachineId } = useParams();
   const { email } = useAuth();
 
   // 1) State dasar
   const [studentEmail, setStudentEmail] = useState(email || "");
   const [instructor, setInstructor] = useState("");
-  const [machineId, setMachineId] = useState("");
+  const [machineId, setMachineId] = useState(paramMachineId ?? "");
 
   // answers akan dinamis: kuncinya dari pertanyaan
   const [answers, setAnswers] = useState<Record<string, boolean>>({});
@@ -49,7 +51,7 @@ export default function QuestionForm() {
   });
 
   // 3) Fetch instruktur (atau bisa static jika belum ada API)
-  const { data: instructors, isLoading: loadingInstr } = useQuery<User[]>({
+  const { data: instructors, isLoading: loadingInstr } = useQuery<UserData[]>({
     queryKey: ["instructors"],
     queryFn: () => apiFetch("user/role/instructor"),
   });
@@ -167,6 +169,7 @@ export default function QuestionForm() {
       {/* Mesin */}
       <label className="block mb-1 font-medium">Pilih Mesin</label>
       <select
+        disabled={!!paramMachineId}
         value={machineId}
         onChange={(e) => {
           setMachineId(e.target.value);

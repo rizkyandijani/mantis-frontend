@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import { AuthPayload } from "../contexts/AuthContext";
 import { UserRole } from "../types/user";
 import { useAuth } from "../contexts/AuthContext";
+import { useSearchParams } from "react-router-dom";
 
 interface LoginResponse {
   token?: string;
@@ -19,6 +20,8 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [params] = useSearchParams();
+  const redirect = params.get("redirect") || "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,12 +33,12 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      console.log("cek type response login", typeof response);
-      console.log("cek response login", response);
       if (response.token) {
         login(response.token);
         const { role } = jwtDecode<AuthPayload>(response.token);
-        if (role === UserRole.STUDENT) {
+        if (redirect) {
+          navigate(redirect);
+        } else if (role === UserRole.STUDENT) {
           navigate("/question");
         } else {
           navigate("/dashboard");
