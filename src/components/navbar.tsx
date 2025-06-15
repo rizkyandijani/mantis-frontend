@@ -33,6 +33,16 @@ const Navbar: React.FC = () => {
       label: "Machines",
       roles: [UserRole.ADMIN, UserRole.INSTRUCTOR],
     },
+    {
+      to: "/maintenaceSubmissionList",
+      label: "Daily Maintenance List",
+      roles: [UserRole.ADMIN, UserRole.INSTRUCTOR],
+    },
+    {
+      to: "/my-maintenance",
+      label: "Submitted Daily Maintenance",
+      roles: [UserRole.STUDENT],
+    },
     // { to: "/schedule", label: "Schedule" },
     // { to: "/notifications", label: "Notifications" },
     // { to: "/status", label: "Status" },
@@ -49,8 +59,8 @@ const Navbar: React.FC = () => {
 
   console.log("cek allowed links", allowedLinks);
   return (
-    <nav className="bg-blue-700 text-white px-4 py-2 h-auto">
-      <div className="flex items-center justify-between">
+    <nav className="bg-blue-700 text-white">
+      <div className="flex items-center justify-between px-4 py-2">
         <div className="text-lg font-semibold flex items-center">
           <img
             alt="Mantis Logo"
@@ -61,7 +71,7 @@ const Navbar: React.FC = () => {
         </div>
         {role && (
           <button
-            className="text-white focus:outline-none cursor-pointer px-3 py-2 rounded hover:bg-blue-500"
+            className="text-white focus:outline-none cursor-pointer px-3 py-2 hover:bg-blue-600"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             ☰
@@ -69,13 +79,15 @@ const Navbar: React.FC = () => {
         )}
       </div>
       {menuOpen && (
-        <div className={`sm:flex flex-col`}>
+        <div
+          className={`transition duration-500 ease-in-out mt-2 sm:flex bg-blue-800`}
+        >
           {allowedLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className={`block sm:inline-block px-3 py-2 rounded hover:bg-blue-500 ${
-                location.pathname === link.to ? "bg-blue-500" : ""
+              className={`block sm:inline-block px-3 py-2 hover:bg-blue-600 ${
+                location.pathname === link.to ? "bg-blue-600" : ""
               }`}
               onClick={() => setMenuOpen(false)}
             >
@@ -85,7 +97,7 @@ const Navbar: React.FC = () => {
           {role && (
             <button
               onClick={handleLogout}
-              className="sm:ml-3 px-3 py-2 rounded hover:bg-blue-500 cursor-pointer"
+              className="sm:ml-3 px-3 py-2 rounded hover:bg-blue-600 cursor-pointer"
             >
               Logout
             </button>

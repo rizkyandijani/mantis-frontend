@@ -17,7 +17,7 @@ import MaintenanceSchedule from "./pages/MaintenanceSchedule";
 import NotificationPage from "./pages/NotificationPage";
 import MachineStatus from "./pages/MachineStatus";
 import QRAccessPage from "./pages/QRAccessPage";
-import Navbar from "./components/navbar";
+import MaintenanceSubmissionList from "./pages/MaintenanceList";
 import LoginPage from "./pages/login";
 import ReviewMaintenance from "./pages/ReviewMaintenance";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -26,6 +26,8 @@ import { ProtectedRoute } from "./components/protectedRoute";
 import { UserRole } from "./types/user";
 import MachineDetailPage from "./pages/MachineDetailPage";
 import AppWrapper from "./components/appWrapper";
+import AddEditMachine from "./pages/addEditMachine";
+import StudentMaintenancePage from "./pages/StudentMaintenanceList";
 
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -144,6 +146,44 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                     allowedRoles={[UserRole.ADMIN, UserRole.INSTRUCTOR]}
                   >
                     <MachineDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="maintenaceSubmissionList"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[UserRole.ADMIN, UserRole.INSTRUCTOR]}
+                  >
+                    <MaintenanceSubmissionList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="machine/add-machine"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[UserRole.ADMIN, UserRole.INSTRUCTOR]}
+                  >
+                    <AddEditMachine />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="machine/edit-machine/:machineId"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[UserRole.ADMIN, UserRole.INSTRUCTOR]}
+                  >
+                    <AddEditMachine />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="my-maintenance"
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.STUDENT]}>
+                    <StudentMaintenancePage />
                   </ProtectedRoute>
                 }
               />

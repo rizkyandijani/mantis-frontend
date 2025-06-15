@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../libs/api";
 import { UserData } from "../types/user";
 import { useAuth } from "../contexts/AuthContext";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { swal } from "../libs/swal";
 
 interface Machine {
@@ -34,6 +34,7 @@ interface QuestionPayload {
 
 export default function QuestionForm() {
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const { machineId: paramMachineId } = useParams();
   const { email } = useAuth();
 
@@ -102,6 +103,7 @@ export default function QuestionForm() {
       setAnswers({});
       setInstructor("");
       setMachineId("");
+      navigate("/my-maintenance");
 
       // … reset your state here …
     },

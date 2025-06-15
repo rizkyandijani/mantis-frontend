@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import { MachineData } from "../types/machine";
 import { useNavigate } from "react-router-dom";
 import { swal } from "../libs/swal";
+import { MACHINE_STATUS_WORD } from "./MachineList";
+import { STATUS_COLOR_CLASS } from "../types/machine";
+// import { getStatusOperationColor } from "../service/machine";
 
 export default function MachineDetailPage() {
   const navigate = useNavigate();
@@ -58,13 +61,60 @@ export default function MachineDetailPage() {
   if (isLoading) return <p>Loading...</p>;
   if (!machine) return <p>Machine not found</p>;
 
+  console.log("cek machine status", machine.status);
+  console.log("cek machine status color", STATUS_COLOR_CLASS[machine.status]);
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold">Detail Mesin: {machine.name}</h2>
-      <p>Section: {machine.section}</p>
-      <p>
-        Status Saat Ini: <strong>{machine.status}</strong>
-      </p>
+      <div className="flex">
+        <div>
+          <h2 className="text-xl font-bold">Detail Mesin:</h2>
+          <table className="table-auto w-full border">
+            <tbody>
+              <tr className="bg-gray-100">
+                <th className="p-2 border">ID Mesin</th>
+                <td className="p-2 border">{machine.id}</td>
+              </tr>
+              <tr className="bg-gray-100">
+                <th className="p-2 border">Nama Mesin</th>
+                <td className="p-2 border">{machine.name}</td>
+              </tr>
+              <tr className="bg-gray-100">
+                <th className="p-2 border">Section</th>
+                <td className="p-2 border">{machine.section}</td>
+              </tr>
+              <tr className="bg-gray-100">
+                <th className="p-2 border">Unit Kerja</th>
+                <td className="p-2 border">{machine.unit}</td>
+              </tr>
+              <tr className="bg-gray-100">
+                <th className="p-2 border">Jenis Mesin</th>
+                <td className="p-2 border">{machine.type}</td>
+              </tr>
+              <tr className="bg-gray-100">
+                <th className="p-2 border">Status Mesin</th>
+                <td className="p-2 border">
+                  {machine.status && (
+                    <div className="flex items-center">
+                      <div
+                        className={`w-5 h-5 ${
+                          STATUS_COLOR_CLASS[machine.status]
+                        } rounded-full mr-1`}
+                      />{" "}
+                      {MACHINE_STATUS_WORD[machine.status]}
+                    </div>
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <button
+            className="bg-blue-800 my-1 text-white py-1 px-1 rounded hover:bg-blue-700 cursor-pointer"
+            onClick={() => navigate("/machine/edit-machine/" + machine.id)}
+          >
+            Edit Detail Mesin
+          </button>
+        </div>
+      </div>
 
       <h3 className="mt-6 font-semibold">Log Terakhir</h3>
       <ul className="list-disc ml-6">
