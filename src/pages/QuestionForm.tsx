@@ -5,6 +5,7 @@ import { apiFetch } from "../libs/api";
 import { UserData } from "../types/user";
 import { useAuth } from "../contexts/AuthContext";
 import { useParams } from "react-router-dom";
+import { swal } from "../libs/swal";
 
 interface Machine {
   id: string;
@@ -93,7 +94,11 @@ export default function QuestionForm() {
     onSuccess: () => {
       // invalidateQueries needs an object with a `queryKey` property
       qc.invalidateQueries({ queryKey: ["userQuestionHistory"] });
-      alert("Question berhasil dikirim!");
+      swal.fire({
+        icon: "success",
+        title: "Berhasil",
+        text: "Daily Maintenance berhasil diinput.",
+      });
       setAnswers({});
       setInstructor("");
       setMachineId("");
@@ -101,8 +106,12 @@ export default function QuestionForm() {
       // … reset your state here …
     },
     onError: (err: any) => {
-      console.log("cek error", err);
-      alert("Gagal submit: " + err.message);
+      console.log("cek error submit daily maintenance", err);
+      swal.fire({
+        icon: "error",
+        title: "Gagal",
+        text: "Daily Maintenance gagal diinput.",
+      });
     },
   });
 
@@ -113,7 +122,11 @@ export default function QuestionForm() {
 
   const handleSubmit = () => {
     if (!studentEmail || !instructor || !machineId) {
-      alert("Lengkapi nama mahasiswa, instruktur, dan mesin.");
+      swal.fire({
+        icon: "error",
+        title: "Tidak Lengkap",
+        text: "Lengkapi nama mahasiswa, instruktur, dan mesin.",
+      });
       return;
     }
     const ArrayAnswers = Object.keys(answers).map((el) => {

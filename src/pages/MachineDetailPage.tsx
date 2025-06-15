@@ -5,6 +5,7 @@ import { apiFetch } from "../libs/api";
 import { useEffect, useState } from "react";
 import { MachineData } from "../types/machine";
 import { useNavigate } from "react-router-dom";
+import { swal } from "../libs/swal";
 
 export default function MachineDetailPage() {
   const navigate = useNavigate();
@@ -32,8 +33,20 @@ export default function MachineDetailPage() {
         body: JSON.stringify(body),
       }),
     onSuccess: () => {
-      alert("Update Machine Status success.");
+      swal.fire({
+        icon: "success",
+        title: "Berhasil",
+        text: "Update Machine Status success!",
+      });
       navigate("/machine");
+    },
+    onError: (error: any) => {
+      console.log("cek error update machine status", error);
+      swal.fire({
+        icon: "error",
+        title: "Gagal",
+        text: "Update Machine Status Failed!",
+      });
     },
   });
 

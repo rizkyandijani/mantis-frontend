@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiFetch } from "../libs/api";
 import { useState } from "react";
+import { swal } from "../libs/swal";
 
 interface responsesDetail {
   id: string;
@@ -66,8 +67,20 @@ export default function ReviewMaintenance() {
         body: JSON.stringify({ note, status }),
       }),
     onSuccess: () => {
-      alert("Submission reviewed.");
+      swal.fire({
+        icon: "success",
+        title: "Berhasil.",
+        text: "Daily Maintenance berhasil di review.",
+      });
       navigate("/approval");
+    },
+    onError: (error: any) => {
+      console.log("cek error review maintenance", error);
+      swal.fire({
+        icon: "error",
+        title: "Gagal",
+        text: "Gagal mereview daily maintenance.",
+      });
     },
   });
 

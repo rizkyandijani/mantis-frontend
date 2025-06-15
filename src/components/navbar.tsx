@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { UserRole } from "../types/user";
+import mantis_logo from "../../public/mantis_icon2.png";
 
 const Navbar: React.FC = () => {
-  const { role, logout } = useAuth();
+  const { token, role, logout } = useAuth();
   const navigate = useNavigate();
   console.log("cek role", role);
   const location = useLocation();
@@ -48,33 +49,49 @@ const Navbar: React.FC = () => {
 
   console.log("cek allowed links", allowedLinks);
   return (
-    <nav className="bg-gray-800 text-white px-4 py-2">
+    <nav className="bg-blue-700 text-white px-4 py-2 h-auto">
       <div className="flex items-center justify-between">
-        <div className="text-lg font-semibold">Mantis</div>
-        <button
-          className="sm:hidden text-white focus:outline-none"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          ☰
-        </button>
-      </div>
-      <div className={`mt-2 sm:flex ${menuOpen ? "block" : "hidden"}`}>
-        {allowedLinks.map((link) => (
-          <Link
-            key={link.to}
-            to={link.to}
-            className={`block sm:inline-block px-3 py-2 rounded hover:bg-gray-700 ${
-              location.pathname === link.to ? "bg-gray-700" : ""
-            }`}
-            onClick={() => setMenuOpen(false)}
+        <div className="text-lg font-semibold flex items-center">
+          <img
+            alt="Mantis Logo"
+            className="mx-auto h-8 w-8"
+            src={mantis_logo}
+          />
+          <span className="align-middle px-2">Mantis</span>
+        </div>
+        {role && (
+          <button
+            className="text-white focus:outline-none cursor-pointer px-3 py-2 rounded hover:bg-blue-500"
+            onClick={() => setMenuOpen(!menuOpen)}
           >
-            {link.label}
-          </Link>
-        ))}
+            ☰
+          </button>
+        )}
       </div>
-      <button onClick={handleLogout} className="ml-auto">
-        Logout
-      </button>
+      {menuOpen && (
+        <div className={`sm:flex flex-col`}>
+          {allowedLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`block sm:inline-block px-3 py-2 rounded hover:bg-blue-500 ${
+                location.pathname === link.to ? "bg-blue-500" : ""
+              }`}
+              onClick={() => setMenuOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+          {role && (
+            <button
+              onClick={handleLogout}
+              className="sm:ml-3 px-3 py-2 rounded hover:bg-blue-500 cursor-pointer"
+            >
+              Logout
+            </button>
+          )}
+        </div>
+      )}
     </nav>
   );
 };

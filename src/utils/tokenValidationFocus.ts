@@ -8,7 +8,8 @@ export function useTokenValidationOnFocus() {
   useEffect(() => {
     const validateToken = async () => {
       try {
-        await apiFetch("/auth/validate-token"); // adjust your endpoint
+        console.log("masuk validateToken")
+        await apiFetch("auth/validate-token"); // adjust your endpoint
       } catch (err) {
         console.warn("Token expired or invalid, redirecting...");
         navigate("/login"); // force logout

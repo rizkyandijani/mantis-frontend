@@ -8,10 +8,12 @@ const AppWrapper = () => {
   useTokenValidationOnFocus(); // ✅ Called inside component
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <Outlet />
-    </>
+      <main className="flex-1 overflow-auto h-full">
+        <Outlet />
+      </main>
+    </div>
   );
 };
 

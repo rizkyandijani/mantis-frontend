@@ -23,6 +23,8 @@ export function ProtectedRoute({ allowedRoles, children }: Props) {
     // return <Navigate to="/login" replace />;
   }
   if (!role || !allowedRoles.includes(role)) {
+    console.log("cek allowed roles", allowedRoles);
+    console.log("cek decoded role", role);
     console.log("masuk protected no role or not allowed");
     // logged in but not authorized
     return <Navigate to="/unauthorized" replace />;

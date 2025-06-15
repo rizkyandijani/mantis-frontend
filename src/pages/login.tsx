@@ -6,6 +6,7 @@ import { AuthPayload } from "../contexts/AuthContext";
 import { UserRole } from "../types/user";
 import { useAuth } from "../contexts/AuthContext";
 import { useSearchParams } from "react-router-dom";
+import mantis_logo from "../../public/mantis_icon2.png";
 
 interface LoginResponse {
   token?: string;
@@ -36,7 +37,9 @@ export default function LoginPage() {
       if (response.token) {
         login(response.token);
         const { role } = jwtDecode<AuthPayload>(response.token);
-        if (redirect) {
+        console.log("cek redirect =>", redirect);
+        if (redirect !== "/" && redirect !== "/login") {
+          console.log("masuk redirect if");
           navigate(redirect);
         } else if (role === UserRole.STUDENT) {
           navigate("/question");
@@ -54,8 +57,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow">
+        <div>
+          <img
+            src={mantis_logo}
+            alt="Logo"
+            className="mx-auto mb-4 h-24 w-24"
+          />
+          <h2 className="text-2xl font-bold text-center mb-1">
+            Welcome to MANTIS
+          </h2>
+          <h4 className="text-xl font-semibold text-center mb-4">
+            (Maintenance Tracking System)
+          </h4>
+        </div>
         <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
         {error && <div className="mb-4 text-red-600 text-sm">{error}</div>}
         <form onSubmit={handleSubmit}>
@@ -91,7 +107,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+            className="w-full bg-blue-800 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
           >
             {isSubmitting ? "Logging in..." : "Login"}
           </button>

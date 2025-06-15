@@ -35,10 +35,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Router>
           <Routes>
             <Route path="/*" element={<AppWrapper />}>
+              <Route index element={<Navigate to="/dashboard" />} />
               <Route path="qr/:machineId" element={<QRAccessPage />} />
               <Route path="login" element={<LoginPage />} />
               <Route path="unauthorized" element={<UnauthorizedPage />} />
-              <Route index element={<Navigate to="/dashboard" />} />
               <Route
                 path="dashboard"
                 element={
