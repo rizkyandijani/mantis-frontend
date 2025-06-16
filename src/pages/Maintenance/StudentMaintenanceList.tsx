@@ -1,12 +1,12 @@
 // src/pages/StudentMaintenancePage.tsx
 import { useQuery } from "@tanstack/react-query";
-import { apiFetch } from "../libs/api";
-import { useAuth } from "../contexts/AuthContext";
+import { apiFetch } from "../../libs/api";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   DailyMaintenanceData,
   MAINTENANCE_STATUS_COLORS,
   MAINTENANCE_STATUS_WORDS,
-} from "../types/maintenance";
+} from "../../types/maintenance";
 import { useEffect, useState } from "react";
 
 export default function StudentMaintenancePage() {

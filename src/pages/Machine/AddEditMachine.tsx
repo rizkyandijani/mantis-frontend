@@ -1,9 +1,9 @@
 // src/pages/AddMachine.tsx
-import MachineForm from "../components/MachineForm";
+import MachineForm from "../../components/MachineForm";
 import { useNavigate, useParams } from "react-router-dom";
-import { MachineData } from "../types/machine";
+import { MachineData } from "../../types/machine";
 import { useQuery } from "@tanstack/react-query";
-import { apiFetch } from "../libs/api";
+import { apiFetch } from "../../libs/api";
 import { useQueryClient } from "@tanstack/react-query";
 
 const getMachineData = (machineId: string | undefined) => {

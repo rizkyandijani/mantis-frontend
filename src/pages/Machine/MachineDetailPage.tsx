@@ -1,13 +1,13 @@
 // src/pages/MachineDetailPage.tsx
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiFetch } from "../libs/api";
+import { apiFetch } from "../../libs/api";
 import { useEffect, useState } from "react";
-import { MachineData } from "../types/machine";
+import { MachineData } from "../../types/machine";
 import { useNavigate } from "react-router-dom";
-import { swal } from "../libs/swal";
+import { swal } from "../../libs/swal";
 import { MACHINE_STATUS_WORD } from "./MachineList";
-import { STATUS_COLOR_CLASS } from "../types/machine";
+import { STATUS_COLOR_CLASS } from "../../types/machine";
 // import { getStatusOperationColor } from "../service/machine";
 
 export default function MachineDetailPage() {

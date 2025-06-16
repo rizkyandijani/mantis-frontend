@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiFetch } from "../libs/api";
+import { apiFetch } from "../../libs/api";
 import { jwtDecode } from "jwt-decode";
-import { AuthPayload } from "../contexts/AuthContext";
-import { UserRole } from "../types/user";
-import { useAuth } from "../contexts/AuthContext";
+import { AuthPayload } from "../../contexts/AuthContext";
+import { UserRole } from "../../types/user";
+import { useAuth } from "../../contexts/AuthContext";
 import { useSearchParams } from "react-router-dom";
-import mantis_logo from "../../public/mantis_icon2.png";
+import mantis_logo from "../../assets/mantis_icon2.png";
 
 interface LoginResponse {
   token?: string;

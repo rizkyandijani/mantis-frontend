@@ -1,8 +1,8 @@
 // src/pages/ApprovedMaintenanceList.tsx
 import { useQuery } from "@tanstack/react-query";
-import { apiFetch } from "../libs/api";
-import { DailyMaintenanceStatus } from "../types/maintenance";
-import { MAINTENANCE_STATUS_COLORS } from "../types/maintenance";
+import { apiFetch } from "../../libs/api";
+import { DailyMaintenanceStatus } from "../../types/maintenance";
+import { MAINTENANCE_STATUS_COLORS } from "../../types/maintenance";
 
 interface Maintenance {
   id: string;

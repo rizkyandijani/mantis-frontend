@@ -10,24 +10,29 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "./tailwind.css";
 import Dashboard from "./pages/Dashboard";
-import QuestionForm from "./pages/QuestionForm";
-import ApprovalList from "./pages/ApprovalList";
-import MachineList from "./pages/MachineList";
-import MaintenanceSchedule from "./pages/MaintenanceSchedule";
+import QuestionForm from "./pages/Maintenance/QuestionForm";
+import ApprovalList from "./pages/Maintenance/ApprovalList";
+import MachineList from "./pages/Machine/MachineList";
+import MaintenanceSchedule from "./pages/Maintenance/MaintenanceSchedule";
 import NotificationPage from "./pages/NotificationPage";
-import MachineStatus from "./pages/MachineStatus";
-import QRAccessPage from "./pages/QRAccessPage";
-import MaintenanceSubmissionList from "./pages/MaintenanceList";
-import LoginPage from "./pages/login";
-import ReviewMaintenance from "./pages/ReviewMaintenance";
+import MachineStatus from "./pages/Machine/MachineStatus";
+import QRAccessPage from "./pages/QR/QRAccessPage";
+import MaintenanceSubmissionList from "./pages/Maintenance/MaintenanceList";
+import LoginPage from "./pages/User/Login";
+import ReviewMaintenance from "./pages/Maintenance/ReviewMaintenance";
 import { AuthProvider } from "./contexts/AuthContext";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
-import { ProtectedRoute } from "./components/protectedRoute";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import { UserRole } from "./types/user";
-import MachineDetailPage from "./pages/MachineDetailPage";
-import AppWrapper from "./components/appWrapper";
-import AddEditMachine from "./pages/addEditMachine";
-import StudentMaintenancePage from "./pages/StudentMaintenanceList";
+import MachineDetailPage from "./pages/Machine/MachineDetailPage";
+import AppWrapper from "./components/AppWrapper";
+import AddEditMachine from "./pages/Machine/AddEditMachine";
+import StudentMaintenancePage from "./pages/Maintenance/StudentMaintenanceList";
+import QRScanPage from "./pages/QR/QRScanPage";
+import UserList from "./pages/User/UserList";
+import AddEditUser from "./pages/User/AddEditUser";
+import QuestionTemplateList from "./pages/QuestionTemplate/QuestionTemplateList";
+import AddEditQuestionTemplate from "./pages/QuestionTemplate/AddEditQuestionTemplate";
 
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -187,6 +192,55 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="user/user-list"
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+                    <UserList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="user/add-user"
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+                    <AddEditUser />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="user/edit-user/:userId"
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+                    <AddEditUser />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="question/template-list"
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+                    <QuestionTemplateList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="question/add-template"
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+                    <AddEditQuestionTemplate />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="question/edit-template/:templateId"
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+                    <AddEditQuestionTemplate />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="scan-qr" element={<QRScanPage />} />
             </Route>
           </Routes>
         </Router>

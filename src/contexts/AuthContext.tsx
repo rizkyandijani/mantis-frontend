@@ -15,14 +15,19 @@ export interface AuthPayload {
   exp: number;
 }
 
+export interface LogoutParams {
+  manual: boolean;
+}
+
 interface AuthContextType {
   token: string | null;
   role: Role | null;
   email: string | null;
   userId: string | null;
   login: (token: string) => void;
-  logout: () => void;
+  logout: (params: LogoutParams) => void;
   isAuthReady: boolean;
+  wasLoggedOutManually: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,6 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [email, setEmail] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [isAuthReady, setAuthReady] = useState(false);
+  const [wasLoggedOutManually, setWasLoggedOutManually] = useState(false);
 
   useEffect(() => {
     const t = localStorage.getItem("authToken");
@@ -63,17 +69,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUserId(s);
   };
 
-  const logout = () => {
+  const logout = (params: LogoutParams) => {
     localStorage.removeItem("authToken");
     setToken(null);
     setRole(null);
     setEmail(null);
     setUserId(null);
+    setWasLoggedOutManually(!!params.manual);
   };
 
   return (
     <AuthContext.Provider
-      value={{ token, role, email, userId, login, logout, isAuthReady }}
+      value={{
+        token,
+        role,
+        email,
+        userId,
+        login,
+        logout,
+        wasLoggedOutManually,
+        isAuthReady,
+      }}
     >
       {children}
     </AuthContext.Provider>

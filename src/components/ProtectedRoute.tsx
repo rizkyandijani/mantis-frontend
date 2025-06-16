@@ -10,7 +10,7 @@ interface Props {
 
 export function ProtectedRoute({ allowedRoles, children }: Props) {
   //   const navigate = useNavigate();
-  const { token, role, isAuthReady } = useAuth();
+  const { token, role, isAuthReady, wasLoggedOutManually } = useAuth();
   const location = useLocation();
   console.log("masuk protected", token, role);
   if (!isAuthReady) {
@@ -19,8 +19,16 @@ export function ProtectedRoute({ allowedRoles, children }: Props) {
 
   if (!token) {
     console.log("masuk protected no token");
-    return <Navigate to={`/login?redirect=${location.pathname}`} />;
-    // return <Navigate to="/login" replace />;
+    if (wasLoggedOutManually) {
+      return <Navigate to="/login" replace />;
+    } else {
+      return (
+        <Navigate
+          to={`/login?redirect=${encodeURIComponent(location.pathname)}`}
+          replace
+        />
+      );
+    }
   }
   if (!role || !allowedRoles.includes(role)) {
     console.log("cek allowed roles", allowedRoles);

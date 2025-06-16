@@ -1,7 +1,7 @@
 // src/AppWrapper.tsx
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Navbar from "./navbar";
+import Navbar from "./Navbar";
 import { useTokenValidationOnFocus } from "../utils/tokenValidationFocus";
 
 const AppWrapper = () => {

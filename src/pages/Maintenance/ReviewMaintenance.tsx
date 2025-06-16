@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiFetch } from "../libs/api";
+import { apiFetch } from "../../libs/api";
 import { useState } from "react";
-import { swal } from "../libs/swal";
+import { swal } from "../../libs/swal";
 
 interface responsesDetail {
   id: string;

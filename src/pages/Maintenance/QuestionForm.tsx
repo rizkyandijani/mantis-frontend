@@ -1,11 +1,11 @@
 // src/pages/QuestionForm.tsx
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiFetch } from "../libs/api";
-import { UserData } from "../types/user";
-import { useAuth } from "../contexts/AuthContext";
+import { apiFetch } from "../../libs/api";
+import { UserData } from "../../types/user";
+import { useAuth } from "../../contexts/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
-import { swal } from "../libs/swal";
+import { swal } from "../../libs/swal";
 
 interface Machine {
   id: string;

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { UserRole } from "../types/user";
-import mantis_logo from "../../public/mantis_icon2.png";
+import mantis_logo from "../assets/mantis_icon2.png";
 
 const Navbar: React.FC = () => {
   const { token, role, logout } = useAuth();
@@ -43,9 +43,16 @@ const Navbar: React.FC = () => {
       label: "Submitted Daily Maintenance",
       roles: [UserRole.STUDENT],
     },
-    // { to: "/schedule", label: "Schedule" },
-    // { to: "/notifications", label: "Notifications" },
-    // { to: "/status", label: "Status" },
+    {
+      to: "/user/user-list",
+      label: "User List",
+      roles: [UserRole.ADMIN],
+    },
+    {
+      to: "/question/template-list",
+      label: "Question Template List",
+      roles: [UserRole.ADMIN],
+    },
   ];
 
   const allowedLinks = role
@@ -53,8 +60,8 @@ const Navbar: React.FC = () => {
     : [];
 
   const handleLogout = () => {
-    logout(); // clear token & role in context
-    navigate("/login"); // go back to login page
+    logout({ manual: true }); // clear token & role in context
+    navigate("/login", { replace: true }); // go back to login page
   };
 
   console.log("cek allowed links", allowedLinks);

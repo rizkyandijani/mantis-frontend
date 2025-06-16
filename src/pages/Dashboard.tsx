@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../libs/api";
-import { PerformanceChart } from "../components/performanceChart";
+import { PerformanceChart } from "../components/PerformanceChart";
 import { MachineStatus } from "../types/machine";
 import { useNavigate } from "react-router-dom";
 

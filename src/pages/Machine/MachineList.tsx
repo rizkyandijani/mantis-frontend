@@ -1,11 +1,11 @@
 // src/pages/MachineList.tsx
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { apiFetch } from "../libs/api";
+import { apiFetch } from "../../libs/api";
 import { Link, useNavigate } from "react-router-dom";
-import { MachineStatus } from "../types/machine";
+import { MachineStatus } from "../../types/machine";
 // import { getStatusOperationColor } from "../service/machine";
-import { STATUS_COLOR_CLASS } from "../types/machine";
+import { STATUS_COLOR_CLASS } from "../../types/machine";
 
 interface Machine {
   id: string;
