@@ -33,6 +33,7 @@ import UserList from "./pages/User/UserList";
 import AddEditUser from "./pages/User/AddEditUser";
 import QuestionTemplateList from "./pages/QuestionTemplate/QuestionTemplateList";
 import AddEditQuestionTemplate from "./pages/QuestionTemplate/AddEditQuestionTemplate";
+import MachineQRScanPage from "./pages/QR/MachineQRScanPage";
 
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -56,34 +57,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="question"
-                element={
-                  <ProtectedRoute
-                    allowedRoles={[
-                      UserRole.ADMIN,
-                      UserRole.INSTRUCTOR,
-                      UserRole.STUDENT,
-                    ]}
-                  >
-                    <QuestionForm />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="question/:machineId"
-                element={
-                  <ProtectedRoute
-                    allowedRoles={[
-                      UserRole.ADMIN,
-                      UserRole.INSTRUCTOR,
-                      UserRole.STUDENT,
-                    ]}
-                  >
-                    <QuestionForm />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="question" element={<QuestionForm />} />
+              <Route path="question/:machineId" element={<QuestionForm />} />
               <Route
                 path="approval"
                 element={
@@ -241,6 +216,22 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 }
               />
               <Route path="scan-qr" element={<QRScanPage />} />
+              <Route
+                path="scan-machine-qr"
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+                    <MachineQRScanPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="scan-machine-qr/add-machine"
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+                    <AddEditMachine />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
           </Routes>
         </Router>

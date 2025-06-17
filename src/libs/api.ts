@@ -20,12 +20,20 @@ export interface FetchOptions extends RequestInit {
         },
         ...options,
       });
+      console.log("cek response", JSON.stringify(res))
   
       const contentType = res.headers.get("Content-Type") || "";
+      const isJson = contentType.includes("application/json");
+      const responseData = isJson ? await res.json() : null;
   
+
       // Handle non-2xx status
       if (!res.ok) {
-        throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
+        throw {
+          status: res.status,
+          message: responseData?.error || res.statusText,
+          raw: responseData,
+        };
       }
   
       // Handle cases where server returns HTML instead of JSON (e.g. fallback 404 page)
@@ -34,15 +42,16 @@ export interface FetchOptions extends RequestInit {
       }
   
       // Parse JSON or return raw response
-      const data = await res.json();
-      return data as T;
+      
+      return responseData as T;
     } catch (err) {
       console.log("cek error fetch", err)
       console.error(`[apiFetch] Error fetching ${url}:`, err);
-      // Optionally throw custom 400 response
+
+      // Re-throw structured error
       throw {
-        status: 400,
-        message: `Failed to fetch API: ${url}`,
+        status: (err as any).status ?? 500,
+        message: (err as any).message ?? "Unknown fetch error",
         detail: err,
       };
     }

@@ -22,20 +22,34 @@ export default function MachineForm({
   const [name, setName] = useState("");
   const [section, setSection] = useState("");
   const [unit, setUnit] = useState("");
-  const [type, setType] = useState<MachineType>(MachineType.BUBUT);
+  const [commonType, setCommonType] = useState("");
+  const [specificType, setSpecificType] = useState("");
+  const [machineGroup, setMachineGroup] = useState("");
+  const [inventoryId, setInventoryId] = useState("");
 
   useEffect(() => {
     if (machine) {
       setName(machine.name);
       setSection(machine.section);
       setUnit(machine.unit);
-      setType(machine.type);
+      setCommonType(machine.machineCommonType);
+      setSpecificType(machine.machineSpecificType);
+      setMachineGroup(machine.machineGroup);
+      setInventoryId(machine.inventoryId);
     }
   }, [machine]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = { name, section, unit, type };
+    const payload = {
+      name,
+      section,
+      unit,
+      commonType,
+      specificType,
+      inventoryId,
+      machineGroup,
+    };
     const method = isEdit ? "PUT" : "POST";
     const url = isEdit ? `machine/${machineId}` : "machine";
 
@@ -52,7 +66,10 @@ export default function MachineForm({
         setName("");
         setSection("");
         setUnit("");
-        setType(MachineType.BUBUT);
+        setCommonType("");
+        setMachineGroup("");
+        setSpecificType("");
+        setInventoryId("");
         onSuccess();
       });
     } catch (error) {
@@ -67,38 +84,76 @@ export default function MachineForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Nama Mesin"
-        required
-        className="w-full border px-3 py-2 rounded"
-      />
-      <input
-        value={section}
-        onChange={(e) => setSection(e.target.value)}
-        placeholder="Section"
-        required
-        className="w-full border px-3 py-2 rounded"
-      />
-      <input
-        value={unit}
-        onChange={(e) => setUnit(e.target.value)}
-        placeholder="Unit"
-        required
-        className="w-full border px-3 py-2 rounded"
-      />
-      <select
-        value={type}
-        onChange={(e) => setType(e.target.value as MachineType)}
-        className="w-full border px-3 py-2 rounded"
-      >
-        {Object.values(MachineType).map((type, index) => (
-          <option key={index} value={type}>
-            {type}
-          </option>
-        ))}
-      </select>
+      <div>
+        <label className="block mb-1">ID Asset Mesin</label>
+        <input
+          value={inventoryId}
+          onChange={(e) => setInventoryId(e.target.value)}
+          placeholder="ID Asset Mesin"
+          required
+          className="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div>
+        <label className="block mb-1">Nama Mesin</label>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Nama Mesin"
+          required
+          className="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div>
+        <label className="block mb-1">Section</label>
+        <input
+          value={section}
+          onChange={(e) => setSection(e.target.value)}
+          placeholder="Section"
+          required
+          className="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div>
+        <label className="block mb-1">Unit Kerja</label>
+        <input
+          value={unit}
+          onChange={(e) => setUnit(e.target.value)}
+          placeholder="Unit"
+          required
+          className="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div>
+        <label className="block mb-1">Jenis Umum Mesin</label>
+        <input
+          value={commonType}
+          onChange={(e) => setCommonType(e.target.value)}
+          placeholder="Jenis Umum Mesin"
+          required
+          className="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div>
+        <label className="block mb-1">Jenis Spesifik Mesin</label>
+        <input
+          value={specificType}
+          onChange={(e) => setSpecificType(e.target.value)}
+          placeholder="Jenis Spesifik Mesin"
+          required
+          className="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div>
+        <label className="block mb-1">Kelompok Mesin</label>
+        <input
+          value={machineGroup}
+          onChange={(e) => setMachineGroup(e.target.value)}
+          placeholder="Kelompok Mesin"
+          required
+          className="w-full border px-3 py-2 rounded"
+        />
+      </div>
       <button
         type="submit"
         className="bg-blue-600 text-white px-4 py-2 rounded"

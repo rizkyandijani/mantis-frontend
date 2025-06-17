@@ -26,7 +26,8 @@ interface Answer {
 }
 
 interface QuestionPayload {
-  studentEmail: string;
+  studentName: string;
+  studentId: string;
   instructorId: string;
   machineId: string;
   responses: Answer[];
@@ -36,10 +37,12 @@ export default function QuestionForm() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const { machineId: paramMachineId } = useParams();
-  const { email } = useAuth();
+  // const { email } = useAuth();
 
   // 1) State dasar
-  const [studentEmail, setStudentEmail] = useState(email || "");
+  // const [studentEmail, setStudentEmail] = useState(email || "");
+  const [studentName, setStudentName] = useState("");
+  const [studentId, setStudentId] = useState("");
   const [instructor, setInstructor] = useState("");
   const [machineId, setMachineId] = useState(paramMachineId ?? "");
 
@@ -103,6 +106,8 @@ export default function QuestionForm() {
       setAnswers({});
       setInstructor("");
       setMachineId("");
+      setStudentId("");
+      setStudentName("");
       navigate("/my-maintenance");
 
       // … reset your state here …
@@ -123,11 +128,11 @@ export default function QuestionForm() {
   };
 
   const handleSubmit = () => {
-    if (!studentEmail || !instructor || !machineId) {
+    if (!studentId || studentName || !instructor || !machineId) {
       swal.fire({
         icon: "error",
         title: "Tidak Lengkap",
-        text: "Lengkapi nama mahasiswa, instruktur, dan mesin.",
+        text: "Lengkapi nama mahasiswa, NIM Mahasiswa, instruktur, dan mesin.",
       });
       return;
     }
@@ -138,7 +143,8 @@ export default function QuestionForm() {
       };
     });
     mutation.mutate({
-      studentEmail,
+      studentName,
+      studentId,
       instructorId: instructor,
       machineId,
       responses: ArrayAnswers,
@@ -159,11 +165,19 @@ export default function QuestionForm() {
       {/* Nama Mahasiswa */}
       <label className="block mb-1 font-medium">Nama Mahasiswa</label>
       <input
-        value={studentEmail}
-        disabled={!!email} // disable if email is already set
-        onChange={(e) => setStudentEmail(e.target.value)}
+        value={studentName}
+        onChange={(e) => setStudentName(e.target.value)}
         className="w-full border border-gray-300 rounded p-2 mb-4"
         placeholder="Masukkan nama..."
+      />
+
+      {/* NIM Mahasiswa */}
+      <label className="block mb-1 font-medium">NIM Mahasiswa</label>
+      <input
+        value={studentId}
+        onChange={(e) => setStudentId(e.target.value)}
+        className="w-full border border-gray-300 rounded p-2 mb-4"
+        placeholder="Masukkan Nomor Induk Mahasiswa..."
       />
 
       {/* Instruktur */}

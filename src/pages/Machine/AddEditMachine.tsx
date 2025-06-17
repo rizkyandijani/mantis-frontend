@@ -1,6 +1,6 @@
 // src/pages/AddMachine.tsx
 import MachineForm from "../../components/MachineForm";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MachineData } from "../../types/machine";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../../libs/api";
@@ -18,6 +18,8 @@ const getMachineData = (machineId: string | undefined) => {
 };
 
 export default function AddEditMachine() {
+  const location = useLocation();
+  const routeState = location?.state;
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { machineId } = useParams();
@@ -33,9 +35,23 @@ export default function AddEditMachine() {
       <h2 className="text-xl font-bold mb-4">
         {isEdit ? "Edit Detail Mesin" : "Tambah Mesin Baru"}
       </h2>
+      {!isEdit && !routeState && (
+        <div className="block border-solid bg-blue-100 border-1 px-1 py-1 w-50">
+          <div className="mb-2">Ingin Menambahkan Mesin via scan QR?</div>
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/scan-machine-qr");
+            }}
+          >
+            Scan QR
+          </button>
+        </div>
+      )}
       <MachineForm
         machineId={machineId}
-        machine={machine}
+        machine={machine ?? routeState?.machineData}
         onSuccess={() => {
           queryClient.invalidateQueries({
             queryKey: ["listMachine", "getMachineById"],
