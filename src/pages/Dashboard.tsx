@@ -50,7 +50,7 @@ export const getMachinePerformances = () => {
 export const getUnitsPerformance = () => {
   return useQuery<any>({
     queryKey: ["totalUnitPerformances"],
-    queryFn: () => apiFetch("maintenance/summary/units"),
+    queryFn: () => apiFetch("maintenance/unitSums"),
 
     retry: 1,
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -60,7 +60,7 @@ export const getUnitsPerformance = () => {
 export const getSectionsPerformance = () => {
   return useQuery<any>({
     queryKey: ["totalSectionPerformances"],
-    queryFn: () => apiFetch("maintenance/summary/sections"),
+    queryFn: () => apiFetch("maintenance/sectionSums"),
 
     retry: 1,
     staleTime: 1000 * 60 * 5, // 5 minutes
