@@ -9,7 +9,8 @@ interface Maintenance {
   date: Date;
   dateOnly: string;
   machine: { name: string };
-  studentEmail: string;
+  studentName: string;
+  studentId: string;
   approvedById: string;
   approvedBy: { name: string };
   approvalNote?: string;
@@ -36,7 +37,8 @@ export default function MaintenanceList() {
           <tr>
             <th className="border p-2">Date</th>
             <th className="border p-2">Machine</th>
-            <th className="border p-2">Student</th>
+            <th className="border p-2">Student Name</th>
+            <th className="border p-2">Student NIM</th>
             <th className="border p-2">Status</th>
           </tr>
         </thead>
@@ -45,7 +47,8 @@ export default function MaintenanceList() {
             <tr key={item.id}>
               <td className="border p-2">{item.dateOnly}</td>
               <td className="border p-2">{item.machine.name}</td>
-              <td className="border p-2">{item.studentEmail}</td>
+              <td className="border p-2">{item.studentName}</td>
+              <td className="border p-2">{item.studentId}</td>
               <td
                 className={`border p-2 ${
                   item.status

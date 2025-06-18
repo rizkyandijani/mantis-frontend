@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiFetch } from "../../libs/api";
 import { useEffect, useState } from "react";
-import { MachineData } from "../../types/machine";
+import { MachineData, MachineStatus } from "../../types/machine";
 import { useNavigate } from "react-router-dom";
 import { swal } from "../../libs/swal";
 import { MACHINE_STATUS_WORD } from "./MachineList";
@@ -27,6 +27,7 @@ export default function MachineDetailPage() {
 
   useEffect(() => {
     setMachine(data);
+    setStatus(data?.status ?? MachineStatus.OPERATIONAL);
   }, [data]);
 
   const mutation = useMutation({
@@ -120,7 +121,7 @@ export default function MachineDetailPage() {
             </tbody>
           </table>
           <button
-            className="bg-blue-800 my-1 text-white py-1 px-1 rounded hover:bg-blue-700 cursor-pointer"
+            className="bg-blue-700  my-1 text-white py-2 px-2 rounded hover:bg-blue-500 cursor-pointer"
             onClick={() => navigate("/machine/edit-machine/" + machine.id)}
           >
             Edit Detail Mesin
@@ -140,10 +141,20 @@ export default function MachineDetailPage() {
 
       <h3 className="mt-6 font-semibold">Update Status</h3>
       <form onSubmit={handleSubmit} className="space-y-3">
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="OPERATIONAL">Operational</option>
-          <option value="MAINTENANCE">Maintenance</option>
-          <option value="OUT_OF_SERVICE">Out of Service</option>
+        <select
+          className="cursor-pointer border-solid border-1 border-black hover:bg-gray-200 px-2 py-2"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option className="hover:bg-gray-200" value="OPERATIONAL">
+            Operational
+          </option>
+          <option className="hover:bg-gray-200" value="MAINTENANCE">
+            Maintenance
+          </option>
+          <option className="hover:bg-gray-200" value="OUT_OF_SERVICE">
+            Out of Service
+          </option>
         </select>
         <textarea
           placeholder="Komentar"
@@ -153,7 +164,7 @@ export default function MachineDetailPage() {
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className="bg-blue-700 hover:bg-blue-500 text-white px-2 py-2 rounded"
         >
           Simpan Log dan Status
         </button>
