@@ -6,16 +6,6 @@ import { apiFetch } from "../../libs/api";
 import { useState } from "react";
 import { QRInventoryResponseData, MachineData } from "../../types/machine";
 
-const mapQRResponseData = (data: QRInventoryResponseData) => {
-  return {
-    machineCommonType: data.jenis,
-    machineSpecificType: data.tipe,
-    inventoryId: data.id_asset,
-    machineGroup: data.kelompok,
-    name: data.nama_asset,
-  };
-};
-
 export default function MachineQRScanPage() {
   const [urlFromQR, setUrlFromQR] = useState<string | null>(null);
   const [scanFinished, setFinishScan] = useState<boolean>(false);
@@ -36,6 +26,7 @@ export default function MachineQRScanPage() {
 
   // 2️⃣ Extract inventory ID after QR data fetched
   const inventoryId = machineDataResult?.data?.id_asset;
+  const isMachineData = machineDataResult?.data.kelompok === "Mesin";
   console.log("cek inventory id", inventoryId);
 
   // 3️⃣ Check if machine with same inventory ID is already registered
@@ -46,7 +37,7 @@ export default function MachineQRScanPage() {
   } = useQuery<MachineData>({
     queryKey: ["checkMachine", inventoryId],
     queryFn: () => apiFetch(`machine/byInventoryId/${inventoryId}`),
-    enabled: !!inventoryId,
+    enabled: !!inventoryId && isMachineData, // Condition added here
   });
 
   console.log(
@@ -101,28 +92,30 @@ export default function MachineQRScanPage() {
           </p>
 
           {isCheckingMachine && <p>Mengecek apakah mesin sudah terdaftar...</p>}
+          {!isMachineData && (
+            <p>
+              Inventaris Bukan Kelompok Mesin, tidak dapat melakukan proses
+              lanjutan.
+            </p>
+          )}
           {checkError && !machineNotFound && <p>Gagal cek mesin di database</p>}
           {checkError && machineNotFound && (
-            <p>Mesin belum terdaftar di Database</p>
+            <div>
+              <p>Mesin belum terdaftar di Database.</p>
+              <p>Harap hubungi admin/instruktur untuk mendaftarkan mesin.</p>
+            </div>
           )}
 
-          {registeredMachine ? (
-            <p className="text-green-600 font-medium mt-2">
-              Mesin sudah terdaftar.
-            </p>
-          ) : !isCheckingMachine ? (
-            <button
-              className="mt-3 bg-blue-800 text-white py-1 px-3 rounded hover:bg-blue-700"
-              onClick={() =>
-                navigate(`add-machine`, {
-                  state: {
-                    machineData: mapQRResponseData(machineDataResult.data),
-                  },
-                })
-              }
-            >
-              Daftarkan Mesin?
-            </button>
+          {registeredMachine && !isCheckingMachine ? (
+            <div>
+              <p>Mesin terdaftar. Lakukan Daily Maintenance?</p>
+              <button
+                className="mt-3 bg-blue-800 text-white py-1 px-3 rounded hover:bg-blue-700"
+                onClick={() => navigate(`/question/${registeredMachine.id}`)}
+              >
+                Isi Maintenance Checklist
+              </button>
+            </div>
           ) : (
             <></>
           )}
@@ -137,10 +130,10 @@ export default function MachineQRScanPage() {
         )}
 
       {!urlFromQR && scanFinished && <p>QR URL tidak valid.</p>}
-      {scanFinished && !isCheckingMachine && (
+      {scanFinished && !isFetchingQR && !isCheckingMachine && (
         <div className="py-2 text-center">
           <button
-            className="bg-blue-700 text-white cursor-pointer hover:bg-blue-500 rounded px-2 py-2"
+            className="bg-blue-700 cursor-pointer hover:bg-blue-500 text-white rounded px-2 py-2"
             onClick={() => {
               // Reset state
               setUrlFromQR(null);

@@ -28,12 +28,13 @@ import MachineDetailPage from "./pages/Machine/MachineDetailPage";
 import AppWrapper from "./components/AppWrapper";
 import AddEditMachine from "./pages/Machine/AddEditMachine";
 import StudentMaintenancePage from "./pages/Maintenance/StudentMaintenanceList";
-import QRScanPage from "./pages/QR/QRScanPage";
+import MaintenanceQRScanPage from "./pages/QR/MaintenanceQRScanPage";
 import UserList from "./pages/User/UserList";
 import AddEditUser from "./pages/User/AddEditUser";
 import QuestionTemplateList from "./pages/QuestionTemplate/QuestionTemplateList";
 import AddEditQuestionTemplate from "./pages/QuestionTemplate/AddEditQuestionTemplate";
 import MachineQRScanPage from "./pages/QR/MachineQRScanPage";
+import RoleRedirectPage from "./pages/RoleRedirectedPage";
 
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -43,7 +44,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Router>
           <Routes>
             <Route path="/*" element={<AppWrapper />}>
-              <Route index element={<Navigate to="/dashboard" />} />
+              <Route index element={<RoleRedirectPage />} />
               <Route path="qr/:machineId" element={<QRAccessPage />} />
               <Route path="login" element={<LoginPage />} />
               <Route path="unauthorized" element={<UnauthorizedPage />} />
@@ -160,7 +161,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 }
               />
               <Route
-                path="my-maintenance"
+                path="student/my-maintenance"
                 element={
                   <ProtectedRoute allowedRoles={[UserRole.STUDENT]}>
                     <StudentMaintenancePage />
@@ -215,7 +216,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                   </ProtectedRoute>
                 }
               />
-              <Route path="scan-qr" element={<QRScanPage />} />
+              <Route path="scan-qr" element={<MaintenanceQRScanPage />} />
               <Route
                 path="scan-machine-qr"
                 element={

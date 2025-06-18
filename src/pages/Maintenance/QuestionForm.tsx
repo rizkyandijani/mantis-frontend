@@ -10,7 +10,7 @@ import { swal } from "../../libs/swal";
 interface Machine {
   id: string;
   name: string;
-  type: string; // misal "BUBUT", "FRAIS", dst
+  machineCommonType: string; // misal "BUBUT", "FRAIS", dst
 }
 
 interface Question {
@@ -34,6 +34,7 @@ interface QuestionPayload {
 }
 
 export default function QuestionForm() {
+  const { token, role } = useAuth();
   const qc = useQueryClient();
   const navigate = useNavigate();
   const { machineId: paramMachineId } = useParams();
@@ -58,11 +59,13 @@ export default function QuestionForm() {
   // 3) Fetch instruktur (atau bisa static jika belum ada API)
   const { data: instructors, isLoading: loadingInstr } = useQuery<UserData[]>({
     queryKey: ["instructors"],
-    queryFn: () => apiFetch("user/role/instructor"),
+    queryFn: () => apiFetch("user/instructors"),
   });
 
   // 4) Fetch pertanyaan tiap kali machineId berubah
-  const machineType = machines?.find((m) => m.id === machineId)?.type;
+  const machineType = machines?.find(
+    (m) => m.id === machineId
+  )?.machineCommonType;
   const {
     data: questions,
     isLoading: loadingQuestions,
@@ -108,16 +111,20 @@ export default function QuestionForm() {
       setMachineId("");
       setStudentId("");
       setStudentName("");
-      navigate("/my-maintenance");
+      if (token) {
+        navigate("/student/my-maintenance");
+      } else {
+        navigate("/login");
+      }
 
       // … reset your state here …
     },
     onError: (err: any) => {
-      console.log("cek error submit daily maintenance", err);
+      console.log("err di questionsubmit", err);
       swal.fire({
         icon: "error",
         title: "Gagal",
-        text: "Daily Maintenance gagal diinput.",
+        text: err.message ?? "Daily Maintenance gagal diinput.",
       });
     },
   });
@@ -128,7 +135,7 @@ export default function QuestionForm() {
   };
 
   const handleSubmit = () => {
-    if (!studentId || studentName || !instructor || !machineId) {
+    if (!studentId || !studentName || !instructor || !machineId) {
       swal.fire({
         icon: "error",
         title: "Tidak Lengkap",
@@ -210,7 +217,7 @@ export default function QuestionForm() {
         <option value="">Pilih Mesin</option>
         {machines!.map((m) => (
           <option key={m.id} value={m.id}>
-            {m.name} ({m.type})
+            {m.name} ({m.machineCommonType})
           </option>
         ))}
       </select>

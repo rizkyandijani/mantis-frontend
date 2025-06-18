@@ -6,10 +6,8 @@ import { useAuth } from "../../contexts/AuthContext";
 type PendingApproval = {
   id: string;
   date: string;
-  student: {
-    name: string | null;
-    email: string;
-  };
+  studentName: string;
+  studentId: string;
   machine: {
     name: string;
     unit: string;
@@ -25,6 +23,7 @@ export default function ApprovalList() {
         `maintenance/status/PENDING/approver/${encodeURIComponent(userId!)}`
       ),
   });
+  console.log("cek data", data);
 
   if (isLoading) return <p className="p-4">Loading...</p>;
   if (error) return <p className="p-4 text-red-500">Error fetching data</p>;
@@ -41,7 +40,8 @@ export default function ApprovalList() {
               <th className="border p-2">Date</th>
               <th className="border p-2">Machine</th>
               <th className="border p-2">Unit</th>
-              <th className="border p-2">Student</th>
+              <th className="border p-2">Student NIM</th>
+              <th className="border p-2">Student Name</th>
               <th className="border p-2">Action</th>
             </tr>
           </thead>
@@ -53,9 +53,8 @@ export default function ApprovalList() {
                 </td>
                 <td className="border p-2">{item.machine.name}</td>
                 <td className="border p-2">{item.machine.unit}</td>
-                <td className="border p-2">
-                  {item.student.name || item.student.email}
-                </td>
+                <td className="border p-2">{item.studentId}</td>
+                <td className="border p-2">{item.studentName}</td>
                 <td className="border p-2 text-center">
                   <Link
                     to={`/approval/${item.id}`}

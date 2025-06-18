@@ -107,10 +107,21 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-blue-800 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+            className="w-full cursor-pointer bg-blue-800 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
           >
             {isSubmitting ? "Logging in..." : "Login"}
           </button>
+          <div>
+            <p className="text-center py-2">Atau</p>
+
+            <button
+              type="button"
+              onClick={() => navigate("/scan-qr")}
+              className="w-full cursor-pointer bg-blue-800 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+            >
+              {"Scan QR Inventaris Mesin"}
+            </button>
+          </div>
         </form>
       </div>
     </div>

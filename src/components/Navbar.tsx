@@ -39,7 +39,7 @@ const Navbar: React.FC = () => {
       roles: [UserRole.ADMIN, UserRole.INSTRUCTOR],
     },
     {
-      to: "/my-maintenance",
+      to: "/student/my-maintenance",
       label: "Submitted Daily Maintenance",
       roles: [UserRole.STUDENT],
     },

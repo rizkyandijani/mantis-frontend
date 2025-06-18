@@ -47,6 +47,26 @@ export const getMachinePerformances = () => {
   });
 };
 
+export const getUnitsPerformance = () => {
+  return useQuery<any>({
+    queryKey: ["totalUnitPerformances"],
+    queryFn: () => apiFetch("maintenance/summary/units"),
+
+    retry: 1,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
+
+export const getSectionsPerformance = () => {
+  return useQuery<any>({
+    queryKey: ["totalSectionPerformances"],
+    queryFn: () => apiFetch("maintenance/summary/sections"),
+
+    retry: 1,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
+
 const formatPerformanceData = (performances: monthlyPerformances[]) => {
   return performances.map((performance) => ({
     month: `${performance.month} ${performance.year}`,
@@ -65,6 +85,19 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const { data: performances, error, isLoading } = getMachinePerformances();
+  const {
+    data: unitPerformance,
+    error: unitError,
+    isLoading: unitIsLoading,
+  } = getUnitsPerformance();
+  const {
+    data: sectionPerformance,
+    error: sectionError,
+    isLoading: sectionIsLoading,
+  } = getSectionsPerformance();
+
+  console.log("cek unit performance", unitPerformance);
+  console.log("cek section performance", sectionPerformance);
 
   console.log("cek performances");
   useEffect(() => {
@@ -82,8 +115,8 @@ export default function Dashboard() {
   return (
     <div className="px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
       <PerformanceChart data={data} />
-      <div className="flex justify-between">
-        <div className="h-56 w-42 mx-1 mb-2">
+      <div className="grid gap-4 grid-cols-1 mb-4 sm:grid-cols-2 md:grid-cols-3">
+        <div className="h-full w-full mx-1 mb-2">
           <div className="block items-center justify-center h-full">
             <span className="text-black font-bold">Machine Summary</span>
             <table className="table-auto w-full border">
@@ -139,7 +172,7 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
-        <div className="h-42 w-42 mx-1">
+        <div className="h-full w-full mx-1">
           <div className="block items-center justify-center h-full">
             <span className="text-black font-bold">Unit Summary</span>
             <table>
@@ -149,22 +182,43 @@ export default function Dashboard() {
                   <td className="p-2 border">Performance</td>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody>
+                {unitPerformance?.data.map((unit: any, idx: number) => (
+                  <tr key={idx} className="hover:bg-gray-50">
+                    <td className="p-2 border whitespace-nowrap">
+                      {unit.unit}
+                    </td>
+                    <td className="p-2 border text-center font-semibold">
+                      {unit.performance}%
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
         </div>
-        <div className="h-42 w-42 mx-1">
+        <div className="h-full w-full mx-1">
           <div className="block items-center justify-center h-full">
             <span className="text-black font-bold">Section Summary</span>
             <table>
               <thead>
                 <tr>
-                  <td className="p-2 border">Name</td>
-                  <td className="p-2 border">Unit Name</td>
+                  <td className="p-2 border">Section Name</td>
                   <td className="p-2 border">Performance</td>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody>
+                {sectionPerformance?.data.map((section: any, idx: number) => (
+                  <tr key={idx} className="hover:bg-gray-50">
+                    <td className="p-2 border whitespace-nowrap">
+                      {section.section}
+                    </td>
+                    <td className="p-2 border text-center font-semibold">
+                      {section.performance}%
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
         </div>
