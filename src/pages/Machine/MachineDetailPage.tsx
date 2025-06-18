@@ -75,6 +75,10 @@ export default function MachineDetailPage() {
                 <td className="p-2 border">{machine.id}</td>
               </tr>
               <tr className="bg-gray-100">
+                <th className="p-2 border">ID Inventaris Mesin</th>
+                <td className="p-2 border">{machine.inventoryId}</td>
+              </tr>
+              <tr className="bg-gray-100">
                 <th className="p-2 border">Nama Mesin</th>
                 <td className="p-2 border">{machine.name}</td>
               </tr>
@@ -87,8 +91,16 @@ export default function MachineDetailPage() {
                 <td className="p-2 border">{machine.unit}</td>
               </tr>
               <tr className="bg-gray-100">
-                <th className="p-2 border">Jenis Mesin</th>
-                <td className="p-2 border">{machine.type}</td>
+                <th className="p-2 border">Kelompok Mesin</th>
+                <td className="p-2 border">{machine.machineGroup}</td>
+              </tr>
+              <tr className="bg-gray-100">
+                <th className="p-2 border">Jenis Umum Mesin</th>
+                <td className="p-2 border">{machine.machineCommonType}</td>
+              </tr>
+              <tr className="bg-gray-100">
+                <th className="p-2 border">Jenis Spesifik Mesin</th>
+                <td className="p-2 border">{machine.machineSpecificType}</td>
               </tr>
               <tr className="bg-gray-100">
                 <th className="p-2 border">Status Mesin</th>
