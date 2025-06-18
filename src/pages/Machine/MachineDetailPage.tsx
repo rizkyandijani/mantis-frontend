@@ -41,7 +41,7 @@ export default function MachineDetailPage() {
         title: "Berhasil",
         text: "Update Machine Status success!",
       });
-      navigate("/machine");
+      navigate("/machines");
     },
     onError: (error: any) => {
       console.log("cek error update machine status", error);
