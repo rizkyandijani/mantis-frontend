@@ -9,6 +9,7 @@ interface responsesDetail {
   dailyMaintenanceId: string;
   questionId: string;
   answer: boolean;
+  evidenceUrl: string;
 }
 
 interface machineDetail {
@@ -53,12 +54,17 @@ export default function ReviewMaintenance() {
   const navigate = useNavigate();
   const [note, setNote] = useState("");
   const [status, setStatus] = useState<"APPROVED" | "REJECTED">("APPROVED");
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const { data, isLoading, isError } = useQuery<maintenanceDetail>({
     queryKey: ["maintenance", id],
     queryFn: () => apiFetch(`maintenance/${id}`),
     enabled: !!id,
   });
+  console.log("cek data", data);
+  const handlePreview = (urlString: string) => {
+    setPreviewImage(urlString);
+  };
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -107,7 +113,24 @@ export default function ReviewMaintenance() {
         <ul className="list-disc ml-6">
           {data.responses.map((r: any, idx: number) => (
             <li key={idx}>
-              {r.question.question}: <strong>{r.answer ? "Yes" : "No"}</strong>
+              <div>
+                {r.question.question}:{" "}
+                <strong>{r.answer ? "Yes" : "No"}</strong>
+              </div>
+              <div>
+                {"Evidence : "}
+                {r.evidenceUrl ? (
+                  <img
+                    key={`${r.id}-evidenceImage`}
+                    src={r.evidenceUrl}
+                    alt="preview"
+                    className="h-20 w-20 object-cover mt-2 border cursor-pointer"
+                    onClick={() => handlePreview(r.evidenceUrl)}
+                  />
+                ) : (
+                  "No evidence provided"
+                )}
+              </div>
             </li>
           ))}
         </ul>
@@ -143,6 +166,23 @@ export default function ReviewMaintenance() {
           </button> */}
         </div>
       </div>
+      {previewImage && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="relative">
+            <button
+              className="absolute top-0 right-0 text-white bg-red-600 text-2xl rounded-sm p-2"
+              onClick={() => setPreviewImage(null)}
+            >
+              &times;
+            </button>
+            <img
+              src={previewImage}
+              alt="zoom preview"
+              className="max-h-[90vh] max-w-[90vw] object-contain"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

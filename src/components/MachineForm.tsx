@@ -4,6 +4,7 @@ import { apiFetch } from "../libs/api";
 import { MachineData, MachineType } from "../types/machine";
 import { swal } from "../libs/swal";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 interface MachineFormProps {
   machineId?: string;
@@ -16,6 +17,17 @@ export default function MachineForm({
   onSuccess,
   machine,
 }: MachineFormProps) {
+  const {
+    data: machineTypes,
+    isLoading: loadingMachineTypes,
+    isError: errorMachineTypes,
+  } = useQuery<string[]>({
+    enabled: true,
+    queryKey: ["getALLMachineType"],
+    // hanya fetch jika machineType sudah ada
+    queryFn: () => apiFetch(`machine/allType`),
+  });
+
   console.log("cek machineData form", machine);
   const navigate = useNavigate();
   const isEdit = !!machineId;
@@ -125,17 +137,36 @@ export default function MachineForm({
         />
       </div>
       <div>
-        <label className="block mb-1">Jenis Umum Mesin</label>
-        <input
-          value={commonType}
-          onChange={(e) => setCommonType(e.target.value)}
-          placeholder="Jenis Umum Mesin"
-          required
-          className="w-full border px-3 py-2 rounded"
-        />
+        <label className="block mb-1">{`Jenis Umum Mesin: (Contoh: Lathe Machine, Milling Machine, Prototyping)`}</label>
+        {!loadingMachineTypes && machineTypes?.length === 0 && (
+          <input
+            value={commonType}
+            onChange={(e) => setCommonType(e.target.value)}
+            placeholder="Jenis Umum Mesin"
+            required
+            className="w-full border px-3 py-2 rounded"
+          />
+        )}
+        {!loadingMachineTypes &&
+          machineTypes?.length &&
+          machineTypes?.length > 0 && (
+            <select
+              value={commonType}
+              onChange={(e) => {
+                setCommonType(e.target.value);
+              }}
+              className="w-full border border-gray-300 rounded p-2 mb-1"
+            >
+              {machineTypes?.map((type, index) => (
+                <option key={index} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          )}
       </div>
       <div>
-        <label className="block mb-1">Jenis Spesifik Mesin</label>
+        <label className="block mb-1">{`Jenis Spesifik (Type) Mesin: (Contoh: CNC, Manual, 3D Print SLA)`}</label>
         <input
           value={specificType}
           onChange={(e) => setSpecificType(e.target.value)}

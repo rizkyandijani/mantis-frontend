@@ -1,5 +1,5 @@
 import QRScanner from "../../components/QrScanner";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { isValidUrl } from "../../utils/common";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../../libs/api";
@@ -17,6 +17,8 @@ const mapQRResponseData = (data: QRInventoryResponseData) => {
 };
 
 export default function MachineQRScanPage() {
+  const location = useLocation();
+  console.log("cekl loca", location);
   const [urlFromQR, setUrlFromQR] = useState<string | null>(null);
   const [scanFinished, setFinishScan] = useState<boolean>(false);
   const [scannerKey, setScannerKey] = useState(0);
@@ -71,6 +73,12 @@ export default function MachineQRScanPage() {
 
   return (
     <div className="p-4">
+      <a
+        href={location.state.from ?? "/login"}
+        className="text-blue-500 text-underline"
+      >
+        {`< kembali`}
+      </a>
       <h2 className="text-xl font-bold">Scan QR Code</h2>
 
       {isFetchingQR && <p>Memuat data QR mesin...</p>}

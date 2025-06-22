@@ -42,7 +42,9 @@ export default function AddEditMachine() {
             className="bg-blue-600 text-white px-4 py-2 rounded"
             onClick={(e) => {
               e.preventDefault();
-              navigate("/scan-machine-qr");
+              navigate("/scan-machine-qr", {
+                state: { from: location.pathname },
+              });
             }}
           >
             Scan QR

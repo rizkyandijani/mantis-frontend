@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { apiFetch } from "../../libs/api";
 import { jwtDecode } from "jwt-decode";
 import { AuthPayload } from "../../contexts/AuthContext";
@@ -23,6 +23,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const [params] = useSearchParams();
   const redirect = params.get("redirect") || "/";
+  const location = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,7 +117,9 @@ export default function LoginPage() {
 
             <button
               type="button"
-              onClick={() => navigate("/scan-qr")}
+              onClick={() =>
+                navigate("/scan-qr", { state: { from: location.pathname } })
+              }
               className="w-full cursor-pointer bg-blue-800 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
             >
               {"Scan QR Inventaris Mesin"}

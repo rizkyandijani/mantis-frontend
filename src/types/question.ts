@@ -17,3 +17,14 @@ export interface QuestionTemplateData {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export type FileUploadStatus = 'idle' | 'uploading' | 'success' | 'error';
+
+export type EvidenceState = {
+  [questionId: string]: {
+    file: File;
+    progress: number;
+    status: FileUploadStatus;
+    error?: string;
+  };
+};
