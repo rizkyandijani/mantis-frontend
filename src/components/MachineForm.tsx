@@ -138,15 +138,17 @@ export default function MachineForm({
       </div>
       <div>
         <label className="block mb-1">{`Jenis Umum Mesin: (Contoh: Lathe Machine, Milling Machine, Prototyping)`}</label>
-        {!loadingMachineTypes && machineTypes?.length === 0 && (
-          <input
-            value={commonType}
-            onChange={(e) => setCommonType(e.target.value)}
-            placeholder="Jenis Umum Mesin"
-            required
-            className="w-full border px-3 py-2 rounded"
-          />
-        )}
+        {loadingMachineTypes && <span>Loading Opsi Jenis Umum Mesin..</span>}
+        {!loadingMachineTypes &&
+          (machineTypes?.length === 0 || errorMachineTypes) && (
+            <input
+              value={commonType}
+              onChange={(e) => setCommonType(e.target.value)}
+              placeholder="Jenis Umum Mesin"
+              required
+              className="w-full border px-3 py-2 rounded"
+            />
+          )}
         {!loadingMachineTypes &&
           machineTypes?.length &&
           machineTypes?.length > 0 && (
