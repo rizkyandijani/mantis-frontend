@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { apiFetch } from "../libs/api";
 import { swal } from "../libs/swal";
-import { MachineType } from "../types/machine";
+import { useQuery } from "@tanstack/react-query";
 
 interface Props {
   templateId?: string;
@@ -10,7 +10,7 @@ interface Props {
     question: string;
     isActive: boolean;
     order: number;
-    machineType: MachineType;
+    machineType: string;
   };
   onSuccess: () => void;
 }
@@ -24,7 +24,19 @@ export default function QuestionTemplateForm({
   const [question, setQuestion] = useState("");
   const [isActive, setActivate] = useState<boolean>(true);
   const [order, setOrder] = useState<number>(1);
-  const [mcType, setMachineType] = useState<MachineType>(MachineType.BUBUT);
+  const [mcType, setMachineType] = useState("");
+  const {
+    data: machineTypes,
+    isLoading: loadingMachineTypes,
+    isError: errorMachineTypes,
+  } = useQuery<string[]>({
+    enabled: true,
+    queryKey: ["getALLMachineType"],
+    // fetch available machine type
+    queryFn: () => apiFetch(`machine/allTypes`),
+  });
+
+  console.log("cek machineTypes", machineTypes);
 
   useEffect(() => {
     if (templateData) {
@@ -97,18 +109,35 @@ export default function QuestionTemplateForm({
         />
       </div>
       <div>
-        <label className="block mb-1">Tipe Mesin</label>
-        <select
-          value={mcType}
-          onChange={(e) => setMachineType(e.target.value as MachineType)}
-          className="w-full border px-3 py-2 rounded"
-        >
-          {Object.values(MachineType).map((type, index) => (
-            <option key={index} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
+        <label className="block mb-1">{`Jenis Umum Mesin: (Contoh: Lathe Machine, Milling Machine, Prototyping)`}</label>
+        {loadingMachineTypes && <span>Loading Opsi Jenis Umum Mesin..</span>}
+        {!loadingMachineTypes &&
+          (machineTypes?.length === 0 || errorMachineTypes) && (
+            <input
+              value={mcType}
+              onChange={(e) => setMachineType(e.target.value)}
+              placeholder="Jenis Umum Mesin"
+              required
+              className="w-full border px-3 py-2 rounded"
+            />
+          )}
+        {!loadingMachineTypes &&
+          machineTypes?.length &&
+          machineTypes?.length > 0 && (
+            <select
+              value={mcType}
+              onChange={(e) => {
+                setMachineType(e.target.value);
+              }}
+              className="w-full border border-gray-300 rounded p-2 mb-1"
+            >
+              {machineTypes?.map((type, index) => (
+                <option key={index} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          )}
       </div>
       <button
         type="submit"

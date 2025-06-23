@@ -25,7 +25,7 @@ export default function MachineForm({
     enabled: true,
     queryKey: ["getALLMachineType"],
     // fetch available machine type
-    queryFn: () => apiFetch(`machineTypes`),
+    queryFn: () => apiFetch(`machine/allTypes`),
   });
 
   console.log("cek machineData form", machine);
