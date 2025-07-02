@@ -34,7 +34,7 @@ export function PerformanceChart({ data }: Props) {
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
+          <XAxis dataKey="date" />
           <YAxis unit="%" />
           <Tooltip />
           <Legend />

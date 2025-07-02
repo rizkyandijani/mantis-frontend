@@ -1,8 +1,9 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiFetch } from "../../libs/api";
 import { useState } from "react";
 import { swal } from "../../libs/swal";
+import moment from "moment-timezone";
 
 interface responsesDetail {
   id: string;
@@ -23,16 +24,6 @@ interface machineDetail {
   updatedAt: string;
 }
 
-interface studentDetail {
-  id: string;
-  email: string;
-  password: string;
-  name: string;
-  role: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 interface maintenanceDetail {
   id: string;
   date: string;
@@ -44,12 +35,17 @@ interface maintenanceDetail {
   status: string;
   approvalNote: string;
   machine: machineDetail;
-  student: studentDetail;
+  studentName: string;
+  studentId: string;
   responses: responsesDetail[];
 }
 
 export default function ReviewMaintenance() {
-  console.log("masuk review Maintenance");
+  const location = useLocation();
+  const isDetailMaintenance =
+    location.pathname.split("/").filter((el) => !!el)[0] ===
+    "detailMaintenance";
+
   const { id } = useParams();
   const navigate = useNavigate();
   const [note, setNote] = useState("");
@@ -61,7 +57,11 @@ export default function ReviewMaintenance() {
     queryFn: () => apiFetch(`maintenance/${id}`),
     enabled: !!id,
   });
-  console.log("cek data", data);
+
+  const localTime =
+    data?.date &&
+    moment(data.date).tz("Asia/Jakarta").format("DD-MM-YYYY HH:mm:ss");
+
   const handlePreview = (urlString: string) => {
     setPreviewImage(urlString);
   };
@@ -102,10 +102,13 @@ export default function ReviewMaintenance() {
         <strong>Machine:</strong> {data.machine?.name}
       </p>
       <p>
-        <strong>Date:</strong> {new Date(data.dateOnly).toLocaleDateString()}
+        <strong>Submission Time:</strong> {localTime}
       </p>
       <p>
-        <strong>Student:</strong> {data.student?.name}
+        <strong>Nama Mahasiswa:</strong> {data.studentName}
+      </p>
+      <p>
+        <strong>NIM Mahasiswa:</strong> {data.studentId}
       </p>
 
       <div className="my-4">
@@ -136,26 +139,27 @@ export default function ReviewMaintenance() {
         </ul>
       </div>
 
-      <div className="mt-6">
-        <label className="block mb-1">Approval Note:</label>
-        <textarea
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          className="w-full border border-gray-300 rounded p-2 mb-4"
-        />
+      {!isDetailMaintenance && (
+        <div className="mt-6">
+          <label className="block mb-1">Approval Note:</label>
+          <textarea
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            className="w-full border border-gray-300 rounded p-2 mb-4"
+          />
 
-        <div className="flex gap-4">
-          <button
-            onClick={() => {
-              setStatus("APPROVED");
-              mutation.mutate();
-            }}
-            className="bg-green-600 text-white px-4 py-2 rounded"
-          >
-            Approve
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={() => {
+                setStatus("APPROVED");
+                mutation.mutate();
+              }}
+              className="bg-green-600 text-white px-4 py-2 rounded"
+            >
+              Approve
+            </button>
 
-          {/* <button
+            {/* <button
             onClick={() => {
               setStatus("REJECTED");
               mutation.mutate();
@@ -164,8 +168,9 @@ export default function ReviewMaintenance() {
           >
             Reject
           </button> */}
+          </div>
         </div>
-      </div>
+      )}
       {previewImage && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="relative">

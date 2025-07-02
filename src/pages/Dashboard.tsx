@@ -6,7 +6,7 @@ import { MachineStatus } from "../types/machine";
 import { useNavigate } from "react-router-dom";
 
 export interface PerformanceData {
-  month: string;
+  dataLabel: string;
   reportedDays: number;
   totalWorkingDays: number;
   section: string;
@@ -25,8 +25,7 @@ export interface machinePerformance {
 }
 
 export interface monthlyPerformances {
-  month: string;
-  year: string;
+  dataLabel: string;
   machineType: string;
   section: string;
   unit: string;
@@ -37,11 +36,70 @@ export interface monthlyPerformances {
   machineStatus: MachineStatus;
 }
 
-export const getMachinePerformances = () => {
-  return useQuery<monthlyPerformances[]>({
-    queryKey: ["totalMaintenancePerformance"],
-    queryFn: () => apiFetch("maintenance/summary"),
+enum TimeframeType {
+  LAST_YEAR = "LAST_YEAR",
+  CURRENT_YEAR = "CURRENT_YEAR",
+  LAST_90_DAYS = "LAST_90_DAYS",
+  LAST_MONTH = "LAST_MONTH",
+  CURRENT_MONTH = "CURRENT_MONTH",
+}
 
+const generateDateRange = (timeframe: TimeframeType) => {
+  const today = new Date();
+  let from: string;
+  let to: string;
+
+  switch (timeframe) {
+    case TimeframeType.LAST_YEAR:
+      from = new Date(today.getFullYear() - 1, 0, 1).toISOString();
+      to = new Date(today.getFullYear() - 1, 11, 31).toISOString();
+      break;
+    case TimeframeType.CURRENT_YEAR:
+      from = new Date(today.getFullYear(), 0, 1).toISOString();
+      to = new Date(today.getFullYear(), 11, 31).toISOString();
+      break;
+    case TimeframeType.LAST_90_DAYS:
+      from = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString();
+      to = today.toISOString();
+      break;
+    case TimeframeType.LAST_MONTH:
+      from = new Date(
+        today.getFullYear(),
+        today.getMonth() - 1,
+        1
+      ).toISOString();
+      to = new Date(today.getFullYear(), today.getMonth(), 0).toISOString();
+      break;
+    case TimeframeType.CURRENT_MONTH:
+      from = new Date(today.getFullYear(), today.getMonth(), 1).toISOString();
+      to = today.toISOString();
+      break;
+    default:
+      from = today.toISOString();
+      to = today.toISOString();
+  }
+
+  return { from, to };
+};
+
+const TimeFrameOptions: Record<TimeframeType, string> = {
+  [TimeframeType.LAST_YEAR]: "Tahun Lalu",
+  [TimeframeType.CURRENT_YEAR]: "Tahun Ini",
+  [TimeframeType.LAST_90_DAYS]: "90 Hari Terakhir",
+  [TimeframeType.LAST_MONTH]: "Bulan Lalu",
+  [TimeframeType.CURRENT_MONTH]: "Bulan Ini",
+};
+
+export const getChartData = (timeframe: TimeframeType) => {
+  return useQuery<monthlyPerformances[]>({
+    queryKey: ["totalMaintenancePerformance", timeframe],
+    queryFn: () =>
+      apiFetch(
+        `maintenance/summary?${new URLSearchParams(
+          generateDateRange(timeframe ?? TimeframeType.CURRENT_YEAR)
+        )}`
+      ),
+    enabled: !!timeframe,
     retry: 1,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -67,24 +125,34 @@ export const getSectionsPerformance = () => {
   });
 };
 
-const formatPerformanceData = (performances: monthlyPerformances[]) => {
-  return performances.map((performance) => ({
-    month: `${performance.month} ${performance.year}`,
-    reportedDays: performance.reportedDays,
-    totalWorkingDays: performance.totalWorkingDays,
-    section: performance.section,
-    unit: performance.unit,
-    machineName: performance.machineName,
-    percentage: performance.percentage,
-    machineStatus: performance.machineStatus,
-  })) as PerformanceData[];
+const formatPerformanceData = (performances: any[]) => {
+  return performances.map((performance) => {
+    const date = performance.dataLabel
+      ? performance.dataLabel
+      : `${performance.month} ${performance.year}`;
+
+    return {
+      dataLabel: date,
+      reportedDays: performance.reportedDays,
+      totalWorkingDays: performance.totalWorkingDays,
+      section: performance.section,
+      unit: performance.unit,
+      machineName: performance.machineName,
+      percentage: performance.percentage,
+      machineStatus: performance.machineStatus,
+    };
+  });
 };
 
 export default function Dashboard() {
   const [data, setData] = useState<PerformanceData[]>([]);
+  const [timeframe, setTimeframe] = useState<TimeframeType>(
+    TimeframeType.CURRENT_YEAR
+  );
+  console.log("cek timeframe", timeframe);
   const navigate = useNavigate();
 
-  const { data: performances, error, isLoading } = getMachinePerformances();
+  const { data: performances, error, isLoading } = getChartData(timeframe);
   const {
     data: unitPerformance,
     error: unitError,
@@ -114,7 +182,29 @@ export default function Dashboard() {
 
   return (
     <div className="px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
-      <PerformanceChart data={data} />
+      <div>
+        <div>
+          <label>{"Pilihan jangka waktu grafik : "}</label>
+          <select
+            value={timeframe}
+            onChange={(e) => setTimeframe(e.target.value as TimeframeType)}
+            className="w-1/8 border border-gray-300 rounded p-2 mb-4"
+          >
+            {Object.keys(TimeFrameOptions).map((t: string, index: number) => (
+              <option key={index} value={t}>
+                {TimeFrameOptions[t as TimeframeType]}
+              </option>
+            ))}
+          </select>
+        </div>
+        {data.length ? (
+          <PerformanceChart data={data} />
+        ) : (
+          <div className="w-full h-xs mb-3">
+            <span>No data for Chart</span>
+          </div>
+        )}
+      </div>
       <div className="grid gap-4 grid-cols-1 mb-4 sm:grid-cols-2 md:grid-cols-3">
         <div className="h-full w-full mx-1 mb-2">
           <div className="block items-center justify-center h-full">
@@ -245,7 +335,7 @@ export default function Dashboard() {
               data.map((row, idx) => (
                 <tr key={idx} className="hover:bg-gray-50">
                   <td className="p-2 sm:p-3 border whitespace-nowrap">
-                    {row.month}
+                    {row.dataLabel}
                   </td>
                   <td className="p-2 sm:p-3 border whitespace-nowrap">
                     {row.section}

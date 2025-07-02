@@ -6,12 +6,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { MachineStatus } from "../../types/machine";
 // import { getStatusOperationColor } from "../service/machine";
 import { STATUS_COLOR_CLASS } from "../../types/machine";
+import ReactPaginate from "react-paginate";
+
+const ITEMS_PER_PAGE = 10;
 
 interface Machine {
   id: string;
   name: string;
   section: string;
   status: MachineStatus;
+}
+
+interface SelectedPage {
+  selected: number;
 }
 
 export const MACHINE_STATUS_WORD: Record<MachineStatus, string> = {
@@ -45,6 +52,21 @@ export default function MachineList() {
     }
   }, [data]);
 
+  const [itemOffset, setItemOffset] = useState(0);
+  const endOffset = itemOffset + ITEMS_PER_PAGE;
+  console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+  const currentItems = machines.slice(itemOffset, endOffset);
+  const pageCount = Math.ceil(machines.length / ITEMS_PER_PAGE);
+
+  // Invoke when user click to request another page.
+  const handlePageClick = (event: SelectedPage) => {
+    const newOffset = (event.selected * ITEMS_PER_PAGE) % machines.length;
+    console.log(
+      `User requested page number ${event.selected}, which is offset ${newOffset}`
+    );
+    setItemOffset(newOffset ?? 0);
+  };
+
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {(error as any).message}</p>;
 
@@ -71,7 +93,7 @@ export default function MachineList() {
             </tr>
           </thead>
           <tbody>
-            {machines.map((m) => (
+            {currentItems.map((m) => (
               <tr key={m.id} className="hover:bg-gray-50">
                 <td className="hidden md:block p-2 border">{m.id}</td>
                 <td className="p-2 border">{m.name}</td>
@@ -98,6 +120,27 @@ export default function MachineList() {
             ))}
           </tbody>
         </table>
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel="next >"
+          onPageChange={handlePageClick}
+          onClick={(e) => console.log("cek event", e)}
+          pageRangeDisplayed={5}
+          pageCount={pageCount ?? 1}
+          previousLabel="< previous"
+          renderOnZeroPageCount={null}
+          containerClassName="flex justify-center mt-4 flex-wrap gap-2 text-sm"
+          pageClassName="cursor-pointer"
+          pageLinkClassName="block px-3 py-1 border border-gray-300 rounded hover:bg-blue-100 transition"
+          previousClassName="cursor-pointer"
+          previousLinkClassName="block px-3 py-1 border border-gray-300 rounded hover:bg-blue-100 transition"
+          nextClassName="cursor-pointer"
+          nextLinkClassName="block px-3 py-1 border border-gray-300 rounded hover:bg-blue-100 transition"
+          breakClassName="cursor-default"
+          breakLinkClassName="block px-3 py-1 text-gray-400"
+          activeClassName=""
+          activeLinkClassName="bg-blue-500 text-white"
+        />
       </div>
     </div>
   );

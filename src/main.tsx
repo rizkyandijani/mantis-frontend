@@ -233,6 +233,16 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="detailMaintenance/:id"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[UserRole.ADMIN, UserRole.INSTRUCTOR]}
+                  >
+                    <ReviewMaintenance />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
           </Routes>
         </Router>
