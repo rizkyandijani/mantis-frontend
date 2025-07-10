@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "../libs/api";
 import { PerformanceChart } from "../components/PerformanceChart";
 import { MachineStatus } from "../types/machine";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export interface PerformanceData {
   dataLabel: string;
@@ -105,11 +105,11 @@ export const getChartData = (timeframe: TimeframeType) => {
   });
 };
 
-// New: fetch section-unit performance
-const getSectionUnitPerformance = () => {
+// New: fetch all months' section-unit performance
+const getAllMonthsSectionUnitPerformance = () => {
   return useQuery<any>({
-    queryKey: ["sectionUnitPerformance"],
-    queryFn: () => apiFetch("maintenance/sectionUnitPerformance"),
+    queryKey: ["allMonthsSectionUnitPerformance"],
+    queryFn: () => apiFetch("maintenance/allMonthsSectionUnitPerformance"),
     retry: 1,
     staleTime: 1000 * 60 * 5,
   });
@@ -143,7 +143,12 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const { data: performances, error, isLoading } = getChartData(timeframe);
-  const { data: sectionUnitPerformance, error: sectionUnitError, isLoading: sectionUnitIsLoading } = getSectionUnitPerformance();
+  const { data: allMonthsSectionUnitPerformance, error: allMonthsError, isLoading: allMonthsLoading } = getAllMonthsSectionUnitPerformance();
+
+  // Get current month in YYYY-MM
+  const now = new Date();
+  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const currentMonthData = allMonthsSectionUnitPerformance?.data.find((m: any) => m.month === currentMonth)?.data || [];
 
   console.log("cek performances");
   useEffect(() => {
@@ -240,26 +245,36 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
-        {/* Section-Unit Performance Table */}
+        {/* Section-Unit Performance Table for current month, with Month column */}
         <div className="h-full w-full mx-1 col-span-2">
           <div className="block items-center justify-center h-full">
-            <span className="text-black font-bold">Section / Unit Performance</span>
-            {sectionUnitIsLoading ? (
+            <div className="mb-2 flex justify-end">
+              <Link
+                to="/maintenance/section-unit-recap"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
+              >
+                Lihat Rekap Bulanan
+              </Link>
+            </div>
+            <span className="text-black font-bold">Section / Unit Performance (Current Month)</span>
+            {allMonthsLoading ? (
               <div className="p-2">Loading...</div>
-            ) : sectionUnitError ? (
+            ) : allMonthsError ? (
               <div className="p-2 text-red-500">Error loading section-unit performance</div>
             ) : (
               <table className="table-auto w-full border">
                 <thead>
                   <tr>
+                    <th className="p-2 border">Month</th>
                     <th className="p-2 border">Section</th>
                     <th className="p-2 border">Unit</th>
                     <th className="p-2 border">Performance</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sectionUnitPerformance?.data.map((row: any, idx: number) => (
+                  {currentMonthData.map((row: any, idx: number) => (
                     <tr key={idx} className="hover:bg-gray-50">
+                      <td className="p-2 border whitespace-nowrap">{currentMonth}</td>
                       <td className="p-2 border whitespace-nowrap">{row.section}</td>
                       <td className="p-2 border whitespace-nowrap">{row.unit}</td>
                       <td className="p-2 border text-center font-semibold">{row.performance}%</td>
