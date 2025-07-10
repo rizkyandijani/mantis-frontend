@@ -105,23 +105,13 @@ export const getChartData = (timeframe: TimeframeType) => {
   });
 };
 
-export const getUnitsPerformance = () => {
+// New: fetch section-unit performance
+const getSectionUnitPerformance = () => {
   return useQuery<any>({
-    queryKey: ["totalUnitPerformances"],
-    queryFn: () => apiFetch("maintenance/unitSums"),
-
+    queryKey: ["sectionUnitPerformance"],
+    queryFn: () => apiFetch("maintenance/sectionUnitPerformance"),
     retry: 1,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-};
-
-export const getSectionsPerformance = () => {
-  return useQuery<any>({
-    queryKey: ["totalSectionPerformances"],
-    queryFn: () => apiFetch("maintenance/sectionSums"),
-
-    retry: 1,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
   });
 };
 
@@ -153,19 +143,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const { data: performances, error, isLoading } = getChartData(timeframe);
-  const {
-    data: unitPerformance,
-    error: unitError,
-    isLoading: unitIsLoading,
-  } = getUnitsPerformance();
-  const {
-    data: sectionPerformance,
-    error: sectionError,
-    isLoading: sectionIsLoading,
-  } = getSectionsPerformance();
-
-  console.log("cek unit performance", unitPerformance);
-  console.log("cek section performance", sectionPerformance);
+  const { data: sectionUnitPerformance, error: sectionUnitError, isLoading: sectionUnitIsLoading } = getSectionUnitPerformance();
 
   console.log("cek performances");
   useEffect(() => {
@@ -244,7 +222,7 @@ export default function Dashboard() {
                 <tr>
                   <th className="p-2 border text-left flex items-center">
                     <div className={`w-5 h-5 bg-red-500 rounded-full mr-1`} />{" "}
-                    <span>Maintenance</span>
+                    <span>Out of Service</span>
                   </th>
                   <td className="p-2 border text-right font-semibold">
                     {performances?.filter(
@@ -262,54 +240,34 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
-        <div className="h-full w-full mx-1">
+        {/* Section-Unit Performance Table */}
+        <div className="h-full w-full mx-1 col-span-2">
           <div className="block items-center justify-center h-full">
-            <span className="text-black font-bold">Unit Summary</span>
-            <table>
-              <thead>
-                <tr>
-                  <td className="p-2 border">Name</td>
-                  <td className="p-2 border">Performance</td>
-                </tr>
-              </thead>
-              <tbody>
-                {unitPerformance?.data.map((unit: any, idx: number) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <td className="p-2 border whitespace-nowrap">
-                      {unit.unit}
-                    </td>
-                    <td className="p-2 border text-center font-semibold">
-                      {unit.performance}%
-                    </td>
+            <span className="text-black font-bold">Section / Unit Performance</span>
+            {sectionUnitIsLoading ? (
+              <div className="p-2">Loading...</div>
+            ) : sectionUnitError ? (
+              <div className="p-2 text-red-500">Error loading section-unit performance</div>
+            ) : (
+              <table className="table-auto w-full border">
+                <thead>
+                  <tr>
+                    <th className="p-2 border">Section</th>
+                    <th className="p-2 border">Unit</th>
+                    <th className="p-2 border">Performance</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div className="h-full w-full mx-1">
-          <div className="block items-center justify-center h-full">
-            <span className="text-black font-bold">Section Summary</span>
-            <table>
-              <thead>
-                <tr>
-                  <td className="p-2 border">Section Name</td>
-                  <td className="p-2 border">Performance</td>
-                </tr>
-              </thead>
-              <tbody>
-                {sectionPerformance?.data.map((section: any, idx: number) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <td className="p-2 border whitespace-nowrap">
-                      {section.section}
-                    </td>
-                    <td className="p-2 border text-center font-semibold">
-                      {section.performance}%
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {sectionUnitPerformance?.data.map((row: any, idx: number) => (
+                    <tr key={idx} className="hover:bg-gray-50">
+                      <td className="p-2 border whitespace-nowrap">{row.section}</td>
+                      <td className="p-2 border whitespace-nowrap">{row.unit}</td>
+                      <td className="p-2 border text-center font-semibold">{row.performance}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
@@ -322,8 +280,7 @@ export default function Dashboard() {
           <thead>
             <tr className="bg-gray-100">
               <th className="p-2 sm:p-3 border">Bulan & Tahun</th>
-              <th className="p-2 sm:p-3 border">Section</th>
-              <th className="p-2 sm:p-3 border">Unit Kerja</th>
+              <th className="p-2 sm:p-3 border">Section / Unit</th>
               <th className="p-2 sm:p-3 border">Nama Mesin</th>
               <th className="p-2 sm:p-3 border">Hari Dilaporkan</th>
               <th className="p-2 sm:p-3 border">Total Hari Kerja</th>
@@ -338,10 +295,7 @@ export default function Dashboard() {
                     {row.dataLabel}
                   </td>
                   <td className="p-2 sm:p-3 border whitespace-nowrap">
-                    {row.section}
-                  </td>
-                  <td className="p-2 sm:p-3 border whitespace-nowrap">
-                    {row.unit}
+                    {row.section} / {row.unit}
                   </td>
                   <td className="p-2 sm:p-3 border whitespace-nowrap">
                     {row.machineName}

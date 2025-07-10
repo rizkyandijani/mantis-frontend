@@ -95,8 +95,19 @@ export default function ReviewMaintenance() {
     return <p>Something went wrong while fetching maintenance details...</p>;
   if (!data) return <p>Maintenance not found</p>;
 
+  // Get query string for back navigation
+  const queryString = location.search;
+
   return (
     <div className="p-6">
+      <div className="mb-4">
+        <button
+          className="text-blue-600 hover:underline mb-2"
+          onClick={() => navigate(`/maintenaceSubmissionList${queryString}`)}
+        >
+          ← Back to List
+        </button>
+      </div>
       <h2 className="atext-xl font-semibold mb-4">Review Maintenance</h2>
       <p>
         <strong>Machine:</strong> {data.machine?.name}
@@ -110,6 +121,14 @@ export default function ReviewMaintenance() {
       <p>
         <strong>NIM Mahasiswa:</strong> {data.studentId}
       </p>
+
+      {/* Show approval comment if present */}
+      {data.approvalNote && (
+        <div className="my-4 p-3 bg-blue-50 border-l-4 border-blue-400">
+          <strong>Approval Comment:</strong>
+          <div className="mt-1 whitespace-pre-line">{data.approvalNote}</div>
+        </div>
+      )}
 
       <div className="my-4">
         <h3 className="font-semibold">Checklist Responses:</h3>
