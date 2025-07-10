@@ -27,7 +27,7 @@ export function PerformanceChart({ data }: Props) {
   const { chartData, seriesKeys } = formatChartData(data);
 
   return (
-    <div className="w-full h-80 bg-white shadow rounded-lg p-4 mb-6">
+    <div className="w-full h-80 bg-white shadow rounded-lg p-4 mb-2">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={chartData}

@@ -66,51 +66,52 @@ const Navbar: React.FC = () => {
 
   console.log("cek allowed links", allowedLinks);
   return (
-    <nav className="bg-blue-700 text-white">
+    <nav className="bg-blue-700 text-white shadow-md sticky top-0 z-50">
       <div className="flex items-center justify-between px-4 py-2">
-        <div className="text-lg font-semibold flex items-center">
+        <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-80 focus:outline-none">
           <img
             alt="Mantis Logo"
-            className="mx-auto h-8 w-8"
+            className="h-8 w-8"
             src={mantis_logo}
           />
-          <span className="align-middle px-2">Mantis</span>
-        </div>
+          <span className="align-middle px-2 text-lg font-bold tracking-wide">Mantis</span>
+        </Link>
         {role && (
           <button
-            className="text-white focus:outline-none cursor-pointer px-3 py-2 hover:bg-blue-600"
+            className="text-white focus:outline-none cursor-pointer px-3 py-2 rounded hover:bg-blue-600 sm:hidden"
             onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
           >
             ☰
           </button>
         )}
       </div>
-      {menuOpen && (
-        <div
-          className={`transition duration-500 ease-in-out mt-2 sm:flex bg-blue-800`}
-        >
-          {allowedLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={`block sm:inline-block px-3 py-2 hover:bg-blue-600 ${
-                location.pathname === link.to ? "bg-blue-600" : ""
-              }`}
-              onClick={() => setMenuOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
-          {role && (
-            <button
-              onClick={handleLogout}
-              className="sm:ml-3 px-3 py-2 rounded hover:bg-blue-600 cursor-pointer"
-            >
-              Logout
-            </button>
-          )}
-        </div>
-      )}
+      <div
+        className={`${
+          menuOpen ? "block" : "hidden"
+        } sm:flex bg-blue-800 transition-all duration-300 ease-in-out`}
+      >
+        {allowedLinks.map((link) => (
+          <Link
+            key={link.to}
+            to={link.to}
+            className={`block sm:inline-block px-4 py-2 hover:bg-blue-600 transition rounded-md mb-1 sm:mb-0 sm:mr-2 ${
+              location.pathname === link.to ? "bg-blue-600" : ""
+            }`}
+            onClick={() => setMenuOpen(false)}
+          >
+            {link.label}
+          </Link>
+        ))}
+        {role && (
+          <button
+            onClick={handleLogout}
+            className="sm:ml-3 px-4 py-2 rounded hover:bg-blue-600 cursor-pointer bg-blue-900 mt-1 sm:mt-0"
+          >
+            Logout
+          </button>
+        )}
+      </div>
     </nav>
   );
 };

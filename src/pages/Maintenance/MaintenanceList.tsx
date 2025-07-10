@@ -7,6 +7,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import moment from "moment-timezone";
 import { useState, useMemo, useEffect } from "react";
 import { FiMessageCircle } from "react-icons/fi";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface Maintenance {
   id: string;
@@ -43,6 +45,31 @@ export default function MaintenanceList() {
     queryFn: () => apiFetch("maintenance"),
   });
 
+  // Filter state
+  const [filterType, setFilterType] = useState("");
+  const [filterUnit, setFilterUnit] = useState("");
+  const [filterSection, setFilterSection] = useState("");
+  const [filterDateFrom, setFilterDateFrom] = useState<Date | null>(null);
+  const [filterDateTo, setFilterDateTo] = useState<Date | null>(null);
+
+  // Extract unique filter values
+  const machineTypes = useMemo(() => Array.from(new Set(data?.map(d => d.machine?.name) || [])), [data]);
+  const units = useMemo(() => Array.from(new Set(data?.map(d => d.machine?.unit) || [])), [data]);
+  const sections = useMemo(() => Array.from(new Set(data?.map(d => d.machine?.section) || [])), [data]);
+
+  // Filtered data
+  const filteredData = useMemo(() => {
+    return (data || []).filter(item => {
+      const matchType = !filterType || item.machine?.name === filterType;
+      const matchUnit = !filterUnit || item.machine?.unit === filterUnit;
+      const matchSection = !filterSection || item.machine?.section === filterSection;
+      const date = new Date(item.date);
+      const matchDateFrom = !filterDateFrom || date >= filterDateFrom;
+      const matchDateTo = !filterDateTo || date <= filterDateTo;
+      return matchType && matchUnit && matchSection && matchDateFrom && matchDateTo;
+    });
+  }, [data, filterType, filterUnit, filterSection, filterDateFrom, filterDateTo]);
+
   const location = useLocation();
   const navigate = useNavigate();
   const query = useQueryParams();
@@ -64,11 +91,11 @@ export default function MaintenanceList() {
   }, [currentPage, pageSize]);
 
   // Calculate pagination
-  const totalItems = data?.length || 0;
+  const totalItems = filteredData.length;
   const totalPages = Math.ceil(totalItems / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const currentItems = (data?.slice(startIndex, endIndex) || []) as Maintenance[];
+  const currentItems = filteredData.slice(startIndex, endIndex);
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {
@@ -106,9 +133,9 @@ export default function MaintenanceList() {
     return pages;
   };
 
-  // CSV Export function
+  // CSV Export function (export filtered data)
   const exportToCSV = () => {
-    if (!data || data.length === 0) {
+    if (!filteredData || filteredData.length === 0) {
       alert('No data to export');
       return;
     }
@@ -126,7 +153,7 @@ export default function MaintenanceList() {
       'Approved At'
     ];
 
-    const csvData = data.map((item: Maintenance) => [
+    const csvData = filteredData.map((item: Maintenance) => [
       getLocalDate(item.date),
       item.machine.name,
       item.machine.section,
@@ -171,7 +198,7 @@ export default function MaintenanceList() {
 
   return (
     <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
         <h2 className="text-xl font-bold">Maintenance</h2>
         <button
           onClick={exportToCSV}
@@ -182,6 +209,52 @@ export default function MaintenanceList() {
           </svg>
           Export to CSV
         </button>
+      </div>
+      {/* Filter Controls */}
+      <div className="flex flex-wrap gap-2 mb-4 items-end">
+        <div className="flex-1 min-w-[120px] max-w-xs">
+          <label className="block text-xs font-medium mb-1">Machine Type</label>
+          <select value={filterType} onChange={e => setFilterType(e.target.value)} className="border rounded px-2 py-1 text-xs w-full">
+            <option value="">All</option>
+            {machineTypes.map(type => <option key={type} value={type}>{type}</option>)}
+          </select>
+        </div>
+        <div className="flex-1 min-w-[120px] max-w-xs">
+          <label className="block text-xs font-medium mb-1">Unit</label>
+          <select value={filterUnit} onChange={e => setFilterUnit(e.target.value)} className="border rounded px-2 py-1 text-xs w-full">
+            <option value="">All</option>
+            {units.map(unit => <option key={unit} value={unit}>{unit}</option>)}
+          </select>
+        </div>
+        <div className="flex-1 min-w-[120px] max-w-xs">
+          <label className="block text-xs font-medium mb-1">Section</label>
+          <select value={filterSection} onChange={e => setFilterSection(e.target.value)} className="border rounded px-2 py-1 text-xs w-full">
+            <option value="">All</option>
+            {sections.map(section => <option key={section} value={section}>{section}</option>)}
+          </select>
+        </div>
+        <div className="flex-1 min-w-[120px] max-w-xs">
+          <label className="block text-xs font-medium mb-1">Submission Date From</label>
+          <DatePicker
+            selected={filterDateFrom}
+            onChange={(date: Date | null) => setFilterDateFrom(date)}
+            className="border rounded px-2 py-1 text-xs w-full"
+            dateFormat="yyyy-MM-dd"
+            placeholderText="From"
+            isClearable
+          />
+        </div>
+        <div className="flex-1 min-w-[120px] max-w-xs">
+          <label className="block text-xs font-medium mb-1">Submission Date To</label>
+          <DatePicker
+            selected={filterDateTo}
+            onChange={(date: Date | null) => setFilterDateTo(date)}
+            className="border rounded px-2 py-1 text-xs w-full"
+            dateFormat="yyyy-MM-dd"
+            placeholderText="To"
+            isClearable
+          />
+        </div>
       </div>
 
       {/* Page Size Controls */}
@@ -217,12 +290,21 @@ export default function MaintenanceList() {
             <th className="border p-2">Student NIM</th>
             <th className="border p-2">Status</th>
             <th className="border p-2">Comment</th>
+            <th className="border p-2">Approver</th>
             <th className="border p-2">Action</th>
           </tr>
         </thead>
         <tbody>
           {currentItems?.map((item: Maintenance, index: number) => (
-            <tr key={item.id}>
+            <tr key={item.id}
+              className={
+                [
+                  item.status === 'REJECTED' ? 'bg-red-50' : '',
+                  item.approvalNote ? 'ring-2 ring-blue-200' : '',
+                  'transition'
+                ].join(' ')
+              }
+            >
               <td className="border p-2">{startIndex + index + 1}</td>
               <td className="border p-2">{getLocalDate(item.date)}</td>
               <td className="border p-2">{item.machine.name}</td>
@@ -230,19 +312,31 @@ export default function MaintenanceList() {
               <td className="border p-2">{item.machine.unit}</td>
               <td className="border p-2">{item.studentName}</td>
               <td className="border p-2">{item.studentId}</td>
-              <td
-                className={`border p-2 ${
-                  item.status
-                    ? MAINTENANCE_STATUS_COLORS[item.status]
-                    : "text-grey-500"
-                }`}
-              >
-                {item.status ? MAINTENANCE_STATUS_WORDS[item.status] : item.status}
+              <td className="border p-2 text-center">
+                <span
+                  className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
+                    item.status === 'REJECTED'
+                      ? 'bg-red-100 text-red-700 border border-red-300'
+                      : item.status === 'APPROVED'
+                      ? 'bg-green-100 text-green-700 border border-green-300'
+                      : item.status === 'PENDING'
+                      ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
+                      : 'bg-gray-100 text-gray-500 border border-gray-300'
+                  }`}
+                  title={item.status ? MAINTENANCE_STATUS_WORDS[item.status] : 'Unknown'}
+                >
+                  {item.status ? MAINTENANCE_STATUS_WORDS[item.status] : item.status}
+                </span>
               </td>
               <td className="border p-2 text-center">
                 {item.approvalNote ? (
-                  <FiMessageCircle title="Has comment" className="inline text-blue-500" />
+                  <span title={item.approvalNote} className="inline-flex items-center justify-center">
+                    <FiMessageCircle className="inline text-blue-600 w-5 h-5" />
+                  </span>
                 ) : null}
+              </td>
+              <td className="border p-2 text-center">
+                {item.approvedBy?.name || '-'}
               </td>
               <td className="border p-2 text-center">
                 <Link
