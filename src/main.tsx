@@ -35,6 +35,7 @@ import QuestionTemplateList from "./pages/QuestionTemplate/QuestionTemplateList"
 import AddEditQuestionTemplate from "./pages/QuestionTemplate/AddEditQuestionTemplate";
 import MachineQRScanPage from "./pages/QR/MachineQRScanPage";
 import RoleRedirectPage from "./pages/RoleRedirectedPage";
+import SectionUnitPerformanceRecap from "./pages/Maintenance/SectionUnitPerformanceRecap";
 
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -240,6 +241,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                     allowedRoles={[UserRole.ADMIN, UserRole.INSTRUCTOR]}
                   >
                     <ReviewMaintenance />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="maintenance/section-unit-recap"
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.ADMIN, UserRole.INSTRUCTOR]}>
+                    <SectionUnitPerformanceRecap />
                   </ProtectedRoute>
                 }
               />

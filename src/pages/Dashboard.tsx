@@ -283,51 +283,11 @@ export default function Dashboard() {
                 </tbody>
               </table>
             )}
+            <div className="mt-2 p-2 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 font-semibold rounded">
+              Performa dihitung menggunakan 22 hari kerja per bulan sebagai pembagi.
+            </div>
           </div>
         </div>
-      </div>
-      <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 text-center sm:text-left">
-        Rekapan Performa Pemeliharaan Bulanan
-      </h1>
-
-      <div className="overflow-x-auto bg-white shadow rounded-md">
-        <table className="table-auto w-full text-xs sm:text-sm md:text-base text-left border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2 sm:p-3 border">Bulan & Tahun</th>
-              <th className="p-2 sm:p-3 border">Section / Unit</th>
-              <th className="p-2 sm:p-3 border">Nama Mesin</th>
-              <th className="p-2 sm:p-3 border">Hari Dilaporkan</th>
-              <th className="p-2 sm:p-3 border">Total Hari Kerja</th>
-              <th className="p-2 sm:p-3 border">Persentase</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.length > 0 &&
-              data.map((row, idx) => (
-                <tr key={idx} className="hover:bg-gray-50">
-                  <td className="p-2 sm:p-3 border whitespace-nowrap">
-                    {row.dataLabel}
-                  </td>
-                  <td className="p-2 sm:p-3 border whitespace-nowrap">
-                    {row.section} / {row.unit}
-                  </td>
-                  <td className="p-2 sm:p-3 border whitespace-nowrap">
-                    {row.machineName}
-                  </td>
-                  <td className="p-2 sm:p-3 border text-center">
-                    {row.reportedDays}
-                  </td>
-                  <td className="p-2 sm:p-3 border text-center">
-                    {row.totalWorkingDays}
-                  </td>
-                  <td className="p-2 sm:p-3 border text-center font-semibold">
-                    {row.percentage}%
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
       </div>
     </div>
   );

@@ -65,6 +65,9 @@ export default function SectionUnitPerformanceRecap() {
               <FiDownload /> Export CSV
             </button>
           </div>
+          <div className="mb-4 p-2 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 font-semibold rounded">
+            Performa dihitung menggunakan 22 hari kerja per bulan sebagai pembagi.
+          </div>
           <div className="overflow-x-auto bg-white shadow rounded-md">
             <table className="table-auto w-full border">
               <thead>
