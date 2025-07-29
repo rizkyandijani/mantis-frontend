@@ -36,6 +36,7 @@ import AddEditQuestionTemplate from "./pages/QuestionTemplate/AddEditQuestionTem
 import MachineQRScanPage from "./pages/QR/MachineQRScanPage";
 import RoleRedirectPage from "./pages/RoleRedirectedPage";
 import SectionUnitPerformanceRecap from "./pages/Maintenance/SectionUnitPerformanceRecap";
+import YearlyRecapExport from "./pages/Maintenance/YearlyRecapExport";
 
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -138,6 +139,16 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                     allowedRoles={[UserRole.ADMIN, UserRole.INSTRUCTOR]}
                   >
                     <MaintenanceSubmissionList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="maintenance/yearly-recap-export"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[UserRole.ADMIN, UserRole.INSTRUCTOR]}
+                  >
+                    <YearlyRecapExport />
                   </ProtectedRoute>
                 }
               />

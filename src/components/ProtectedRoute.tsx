@@ -12,13 +12,11 @@ export function ProtectedRoute({ allowedRoles, children }: Props) {
   //   const navigate = useNavigate();
   const { token, role, isAuthReady, wasLoggedOutManually } = useAuth();
   const location = useLocation();
-  console.log("masuk protected", token, role);
   if (!isAuthReady) {
     return null; // or a loading spinner
   }
 
   if (!token) {
-    console.log("masuk protected no token");
     if (wasLoggedOutManually) {
       return <Navigate to="/login" replace />;
     } else {
@@ -31,9 +29,6 @@ export function ProtectedRoute({ allowedRoles, children }: Props) {
     }
   }
   if (!role || !allowedRoles.includes(role)) {
-    console.log("cek allowed roles", allowedRoles);
-    console.log("cek decoded role", role);
-    console.log("masuk protected no role or not allowed");
     // logged in but not authorized
     return <Navigate to="/unauthorized" replace />;
   }

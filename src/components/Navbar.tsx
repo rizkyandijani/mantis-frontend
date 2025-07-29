@@ -8,7 +8,6 @@ import mantis_logo from "../assets/mantis_icon2.png";
 const Navbar: React.FC = () => {
   const { token, role, logout } = useAuth();
   const navigate = useNavigate();
-  console.log("cek role", role);
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -39,6 +38,11 @@ const Navbar: React.FC = () => {
       roles: [UserRole.ADMIN, UserRole.INSTRUCTOR],
     },
     {
+      to: "/maintenance/yearly-recap-export",
+      label: "Yearly Maintenance Recap",
+      roles: [UserRole.ADMIN, UserRole.INSTRUCTOR],
+    },
+    {
       to: "/student/my-maintenance",
       label: "Submitted Daily Maintenance",
       roles: [UserRole.STUDENT],
@@ -64,7 +68,6 @@ const Navbar: React.FC = () => {
     navigate("/login", { replace: true }); // go back to login page
   };
 
-  console.log("cek allowed links", allowedLinks);
   return (
     <nav className="bg-blue-700 text-white shadow-md sticky top-0 z-50">
       <div className="flex items-center justify-between px-4 py-2">

@@ -13,7 +13,6 @@ export default function MachineQRScanPage() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("cek location", location);
 
   // 1️⃣ Fetch HTML → parsed machine data from proxy
   const {
@@ -29,7 +28,6 @@ export default function MachineQRScanPage() {
   // 2️⃣ Extract inventory ID after QR data fetched
   const inventoryId = machineDataResult?.data?.id_asset;
   const isMachineData = machineDataResult?.data.kelompok === "Mesin";
-  console.log("cek inventory id", inventoryId);
 
   // 3️⃣ Check if machine with same inventory ID is already registered
   const {
@@ -41,13 +39,6 @@ export default function MachineQRScanPage() {
     queryFn: () => apiFetch(`machine/byInventoryId/${inventoryId}`),
     enabled: !!inventoryId && isMachineData, // Condition added here
   });
-
-  console.log(
-    "cek register machine",
-    registeredMachine,
-    isCheckingMachine,
-    checkError
-  );
 
   const machineNotFound =
     checkError && checkError.message === "|Machine not found";

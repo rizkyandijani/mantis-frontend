@@ -11,8 +11,6 @@ export default function UserList() {
   });
   const navigate = useNavigate();
 
-  console.log("cek data user List", data);
-
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error fetching data</p>;
 

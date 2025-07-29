@@ -22,9 +22,7 @@ export default function AddEditUser() {
   const navigate = useNavigate();
   const { userId } = useParams();
   const isEdit = !!userId;
-  console.log("cek userId", userId);
   const { data: user } = userId ? getUserData(userId) : { data: undefined }; // Fixing the type issue
-  console.log("cek user data", user);
 
   return (
     <div className="p-4">

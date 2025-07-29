@@ -18,7 +18,6 @@ const mapQRResponseData = (data: QRInventoryResponseData) => {
 
 export default function MachineQRScanPage() {
   const location = useLocation();
-  console.log("cekl loca", location);
   const [urlFromQR, setUrlFromQR] = useState<string | null>(null);
   const [scanFinished, setFinishScan] = useState<boolean>(false);
   const [scannerKey, setScannerKey] = useState(0);
@@ -38,7 +37,6 @@ export default function MachineQRScanPage() {
 
   // 2️⃣ Extract inventory ID after QR data fetched
   const inventoryId = machineDataResult?.data?.id_asset;
-  console.log("cek inventory id", inventoryId);
 
   // 3️⃣ Check if machine with same inventory ID is already registered
   const {
@@ -50,13 +48,6 @@ export default function MachineQRScanPage() {
     queryFn: () => apiFetch(`machine/byInventoryId/${inventoryId}`),
     enabled: !!inventoryId,
   });
-
-  console.log(
-    "cek register machine",
-    registeredMachine,
-    isCheckingMachine,
-    checkError
-  );
 
   const machineNotFound =
     checkError && checkError.message === "|Machine not found";

@@ -19,8 +19,6 @@ export default function MachineDetailPage() {
     queryFn: (): Promise<MachineData> => apiFetch(`machine/byId/${id}`),
   });
 
-  console.log("cek response data", data);
-
   const [status, setStatus] = useState("OPERATIONAL");
   const [comment, setComment] = useState("");
   const [machine, setMachine] = useState<MachineData | undefined>(undefined);
@@ -62,8 +60,6 @@ export default function MachineDetailPage() {
   if (isLoading) return <p>Loading...</p>;
   if (!machine) return <p>Machine not found</p>;
 
-  console.log("cek machine status", machine.status);
-  console.log("cek machine status color", STATUS_COLOR_CLASS[machine.status]);
   return (
     <div className="p-4">
       <div className="flex">

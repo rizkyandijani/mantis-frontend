@@ -198,7 +198,6 @@ export default function QuestionForm() {
               setEvidenceFiles
             );
           }
-          console.log("cek evidence url after upload", evidenceUrl);
           return {
             questionId,
             answer,
@@ -214,27 +213,6 @@ export default function QuestionForm() {
         machineId,
         responses: answersWithEvidence,
       });
-      console.log("cek result submit", result);
-
-      // const questionResponses = (result as any).data?.questionResponses || [];
-
-      // 2. Upload evidence files for each question response
-      // for (const qr of questionResponses) {
-      //   const questionId = qr.questionId;
-      //   const responseId = qr.id;
-
-      //   if (evidenceFiles[questionId]) {
-      //     const QuestionEvidenceImage = evidenceFiles[questionId].file;
-      //     const formData = new FormData();
-      //     formData.append("file", QuestionEvidenceImage);
-      //     formData.append("questionResponseId", responseId);
-
-      //     await fetch("/api/evidence", {
-      //       method: "POST",
-      //       body: formData,
-      //     });
-      //   }
-      // }
 
       swal.fire({
         icon: "success",

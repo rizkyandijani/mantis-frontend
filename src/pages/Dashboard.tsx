@@ -139,7 +139,6 @@ export default function Dashboard() {
   const [timeframe, setTimeframe] = useState<TimeframeType>(
     TimeframeType.CURRENT_YEAR
   );
-  console.log("cek timeframe", timeframe);
   const navigate = useNavigate();
 
   const { data: performances, error, isLoading } = getChartData(timeframe);
@@ -150,15 +149,12 @@ export default function Dashboard() {
   const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   const currentMonthData = allMonthsSectionUnitPerformance?.data.find((m: any) => m.month === currentMonth)?.data || [];
 
-  console.log("cek performances");
   useEffect(() => {
     if (performances) {
       const formattedData = formatPerformanceData(performances);
       setData(formattedData);
     }
   }, [performances]);
-
-  console.log("cek performances", performances);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {(error as any).message}</p>;

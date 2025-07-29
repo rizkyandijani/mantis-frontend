@@ -6,6 +6,7 @@ import { swal } from "../../libs/swal";
 import moment from "moment-timezone";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { DailyMaintenanceData } from "../../types/maintenance";
 
 interface responsesDetail {
   id: string;
@@ -27,21 +28,19 @@ interface machineDetail {
   updatedAt: string;
 }
 
-interface maintenanceDetail {
-  id: string;
-  date: string;
-  dateOnly: string;
-  machineId: string;
-  studentEmail: string;
-  approvedById: string;
-  approvedAt: string;
-  status: string;
-  approvalNote: string;
-  machine: machineDetail;
+interface maintenanceDetail extends Omit<DailyMaintenanceData, 'responses'> {
   studentName: string;
   studentId: string;
-  responses: responsesDetail[];
-  approvedBy?: { name: string };
+  approvedBy?: {
+    name: string;
+  };
+  responses: Array<{
+    question?: {
+      question: string;
+    };
+    answer: boolean;
+    evidenceUrl?: string;
+  }>;
 }
 
 export default function ReviewMaintenance() {
@@ -113,6 +112,8 @@ export default function ReviewMaintenance() {
       let y = 26;
       doc.text(`Machine: ${data.machine?.name || "-"}`, 14, y);
       y += 7;
+      doc.text(`Machine Inventory ID: ${data.machine?.inventoryId || "-"}`, 14, y);
+      y += 7;
       doc.text(`Submission Time: ${localTime || "-"}`, 14, y);
       y += 7;
       doc.text(`Nama Mahasiswa: ${data.studentName || "-"}`, 14, y);
@@ -177,9 +178,6 @@ export default function ReviewMaintenance() {
     }
   };
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError)
-    return <p>Something went wrong while fetching maintenance details...</p>;
   if (!data) return <p>Maintenance not found</p>;
 
   // Get query string for back navigation
@@ -210,6 +208,9 @@ export default function ReviewMaintenance() {
       <h2 className="atext-xl font-semibold mb-4">Review Maintenance</h2>
       <p>
         <strong>Machine:</strong> {data.machine?.name}
+      </p>
+      <p>
+        <strong>Machine Inventory ID:</strong> {data.machine?.inventoryId}
       </p>
       <p>
         <strong>Submission Time:</strong> {localTime}

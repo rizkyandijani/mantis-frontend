@@ -17,7 +17,6 @@ export default function MachineForm({
   onSuccess,
   user,
 }: MachineFormProps) {
-  console.log("cek userData form", user);
   const navigate = useNavigate();
   const isEdit = !!userId;
   const [name, setName] = useState("");

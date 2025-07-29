@@ -39,7 +39,6 @@ export default function MachineList() {
   const navigate = useNavigate();
 
   const { data, error, isLoading } = getMachineList();
-  console.log("cek data", data);
 
   useEffect(() => {
     if (data) {
@@ -161,7 +160,6 @@ export default function MachineList() {
           breakLabel="..."
           nextLabel="next >"
           onPageChange={handlePageClick}
-          onClick={(e) => console.log("cek event", e)}
           pageRangeDisplayed={5}
           pageCount={pageCount ?? 1}
           previousLabel="< previous"

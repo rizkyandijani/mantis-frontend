@@ -38,9 +38,7 @@ export default function LoginPage() {
       if (response.token) {
         login(response.token);
         const { role } = jwtDecode<AuthPayload>(response.token);
-        console.log("cek redirect =>", redirect);
         if (redirect !== "/" && redirect !== "/login") {
-          console.log("masuk redirect if");
           navigate(redirect);
         } else if (role === UserRole.STUDENT) {
           navigate("/question");

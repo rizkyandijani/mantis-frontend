@@ -1,54 +1,90 @@
-# React + TypeScript + Vite
+# MANTIS (Maintenance Tracking System)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project consists of a React + TypeScript + Vite frontend and a Node.js/Express + Prisma + PostgreSQL backend.
 
-Currently, two official plugins are available:
+## Prerequisites
+- Node.js (v18+ recommended)
+- npm (v9+ recommended)
+- PostgreSQL (for backend database)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Backend Setup (`mantis-backend`)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. **Install dependencies:**
+   ```bash
+   cd ../mantis-backend
+   npm install
+   ```
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+2. **Configure environment variables:**
+   - Create a `.env` file in `mantis-backend` with at least:
+     ```env
+     DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DATABASE
+     PORT=3000
+     ```
+   - Replace with your actual PostgreSQL credentials.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+3. **Run database migrations:**
+   ```bash
+   npx prisma migrate deploy
+   ```
+   Or, for development:
+   ```bash
+   npx prisma migrate dev
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+4. **Seed the database:**
+   ```bash
+   npm run seed
+   ```
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+5. **Run the backend in development mode:**
+   ```bash
+   npm run dev
+   ```
+   The backend will be available at `http://localhost:3000` by default.
+
+6. **Build for production:**
+   ```bash
+   npm run build
+   # Then start with:
+   npm start
+   ```
+
+---
+
+## Frontend Setup (`mantis-frontend`)
+
+1. **Install dependencies:**
+   ```bash
+   cd ../mantis-frontend
+   npm install
+   ```
+
+2. **Configure environment variables (optional):**
+   - If you need to override the backend API URL, create a `.env` file and set:
+     ```env
+     VITE_API_URL=http://localhost:3000/api
+     ```
+
+3. **Run the frontend in development mode:**
+   ```bash
+   npm run dev
+   ```
+   The frontend will be available at `http://localhost:5173` by default.
+
+4. **Build for production:**
+   ```bash
+   npm run build
+   # Preview the build with:
+   npm run preview
+   ```
+
+---
+
+## Notes
+- Make sure the backend is running before using the frontend.
+- The default ports are 3000 (backend) and 5173 (frontend).
+- Seeder will clear and repopulate the database with sample data.
+- For further customization, see the respective `package.json` files for available scripts.

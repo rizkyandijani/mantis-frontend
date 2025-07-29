@@ -24,11 +24,9 @@ export default function AddEditMachine() {
   const navigate = useNavigate();
   const { machineId } = useParams();
   const isEdit = !!machineId;
-  console.log("cek machineId", machineId);
   const { data: machine } = machineId
     ? getMachineData(machineId)
     : { data: undefined }; // Fixing the type issue
-  console.log("cek machine data", machine);
 
   return (
     <div className="p-4">

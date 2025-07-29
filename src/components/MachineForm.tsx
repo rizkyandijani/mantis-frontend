@@ -28,7 +28,6 @@ export default function MachineForm({
     queryFn: () => apiFetch(`machine/allTypes`),
   });
 
-  console.log("cek machineData form", machine);
   const navigate = useNavigate();
   const isEdit = !!machineId;
   const [name, setName] = useState("");

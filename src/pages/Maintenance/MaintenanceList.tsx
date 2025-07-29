@@ -191,8 +191,6 @@ export default function MaintenanceList() {
     setCurrentPage(1); // Reset to first page when changing page size
   };
 
-  console.log("cek data Maintenance List", data);
-
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error fetching data</p>;
 

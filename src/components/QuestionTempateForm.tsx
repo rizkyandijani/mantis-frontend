@@ -36,11 +36,8 @@ export default function QuestionTemplateForm({
     queryFn: () => apiFetch(`machine/allTypes`),
   });
 
-  console.log("cek machineTypes", machineTypes);
-
   useEffect(() => {
     if (templateData) {
-      console.log("cek template data", templateData);
       setQuestion(templateData.question);
       setActivate(templateData.isActive);
       setOrder(templateData.order);
@@ -51,7 +48,6 @@ export default function QuestionTemplateForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload = { question, isActive, order, machineType: mcType };
-    console.log("cek payload", payload);
     const method = isEdit ? "PUT" : "POST";
     const url = isEdit ? `questionTemplate/${templateId}` : "questionTemplate";
 

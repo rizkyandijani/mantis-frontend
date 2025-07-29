@@ -23,7 +23,6 @@ export default function ApprovalList() {
         `maintenance/status/PENDING/approver/${encodeURIComponent(userId!)}`
       ),
   });
-  console.log("cek data", data);
 
   if (isLoading) return <p className="p-4">Loading...</p>;
   if (error) return <p className="p-4 text-red-500">Error fetching data</p>;
